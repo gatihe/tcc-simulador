@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+{% block title %}Simulação{% endblock %}
+{% block content %}
+<div class="container" style="margin-bottom:50px;">
+   <div class="row">
+      <main role="main" class="col-12">
+         <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+            <h1 class="h2">Simulações</h1>
+            <div class="btn-toolbar mb-2 mb-md-0">
+               <div class="dropdown">
+                  <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  Exportar
+                  </button>
+                  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                     <a class="dropdown-item" href="/download_curso">Curso</a>
+                     <a class="dropdown-item" href="/download_info_std">Informação dos alunos</a>
+                     <a class="dropdown-item" href="/download_historicos">Históricos</a>
+                     <a class="dropdown-item" href="/download_prerequisitos">Pré-requisitos</a>
+                     <div class="dropdown-divider"></div>
+                     <a class="dropdown-item" href="#">Todos</a>
+                     <div class="dropdown-divider"></div>
+                     <a class="dropdown-item" href="/download_visualizacao">Visualizacao</a>
+                  </div>
+               </div>
+            </div>
+         </div>
+         <div id="accordion" style="margin-top:20px;">
+            <div class="card">
+               <div class="card-header" id="headingOne">
+                  <h5 class="mb-0">
+                     <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                     Simulação
+                     </button>
+                  </h5>
+               </div>
+               <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
+                  <div class="card-body">
+                     <div class="table-responsive">
+                        {% for table in simulation_table %}
+                        {{ table|safe }}
+                        {% endfor %}
+                     </div>
+                  </div>
+               </div>
+            </div>
+            <div class="card">
+               <div class="card-header" id="headingTwo">
+                  <h5 class="mb-0">
+                     <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                     Informações dos alunos
+                     </button>
+                  </h5>
+               </div>
+               <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
+                  <div class="card-body">
+                     <div class="table-responsive">
+                        {% for table in std_info_table %}
+                        {{ table|safe }}
+                        {% endfor %}
+                     </div>
+                  </div>
+               </div>
+            </div>
+            <div class="card">
+               <div class="card-header" id="headingThree">
+                  <h5 class="mb-0">
+                     <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                     Histórico
+                     </button>
+                  </h5>
+               </div>
+               <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordion">
+                  <div class="card-body">
+                     <div class="table-responsive">
+                        {% for table in std_records_table %}
+                        {{ table|safe }}
+                        {% endfor %}
+                     </div>
+                  </div>
+               </div>
+            </div>
+            <div class="card" style="margin-bottom:30px">
+               <div class="card-header" id="headingFour">
+                  <h5 class="mb-0">
+                     <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                     Pré-requisitos
+                     </button>
+                  </h5>
+               </div>
+               <div id="collapseFour" class="collapse" aria-labelledby="headingFour" data-parent="#accordion">
+                  <div class="card-body">
+                     <div class="table-responsive">
+                        {% for table in prereqs_table %}
+                        {{ table|safe }}
+                        {% endfor %}
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+         <pre><code>
+{% for line in lines %}
+{{ line }}
+{% endfor %}
+</code></pre>
+      </main>
+   </div>
+</div>
+{% endblock %}

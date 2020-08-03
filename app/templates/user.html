@@ -1,0 +1,123 @@
+<div class="container">
+   <div class="<col>">
+      <h1 id="gerador-de-notas-para-disciplinas">Gerador de notas para disciplinas</h1>
+      <p>Este projeto é um Trabalho de Conclusão de Curso para o curso de Sistemas de Informação da Faculdade de Tecnologia da Unicamp. Este projeto objetiva gerar e adaptar conjuntos de dados para dois sistemas de mineração de dados educacionais em elaboração na Faculdade de Tecnologia da UNICAMP. O primeiro sistema é um visualizador de conjuntos de históricos escolares. O foco deste trabalho é desenvolver um gerador de conjuntos de históricos escolares simulados. Esses conjuntos devem ter características programáveis, como por exemplo padrões específicos que se deseja que sejam possíveis de visualizar, e que serão derivadas de demandas de análise de dados já informadas por coordenadores de curso de graduação.</p>
+      <h5 id="áreas-do-conhecimento-envolvidas-no-trabalho">Áreas do conhecimento envolvidas no trabalho:</h5>
+      <ul>
+         <li>Visualização da Informação</li>
+         <li>
+            <h2>Mineração de dados educacionais</h2>
+            <h4>Requisitos:</h4>
+         </li>
+         <li><a href="https://www.python.org/download/releases/3.0/">Python 3.x</a></li>
+         <li><a href="https://pandas.pydata.org/">Pandas</a> #### Instruções:</li>
+         <li>Faça o download e extração do repositório;</li>
+         <li>Na raiz do diretório extraído, execute o arquivo <code>simulador.py</code>;</li>
+         <li>Importe um catálogo e, se necessário, configurações adicionais;</li>
+         <li>Faça uma simulaçao;</li>
+         <li>
+            <h2>Exporte os relatórios.</h2>
+            <h4>Catálogos (.xml):</h4>
+         </li>
+      </ul>
+      <p>Entre as configurações que dão suporte à simulação de dados educacionais estão os catálogos de curso. Este arquivo tem como utilidade especificar as características do curso à ser simulado. Devem ser inseridos em <code>imports/catalogos/</code>. Um catálogo deve contar com a seguinte estrutura:</p>
+      <pre><code>&lt;all_configs&gt;
+        &lt;cat_info&gt;
+            &lt;course_id&gt;&lt;ID_CURSO&gt;&lt;/course_id&gt;
+            &lt;year&gt;&lt;ANO_DO_CATALOGO&gt;&lt;/year&gt;
+            &lt;max_years&gt;&lt;TEMPO_MAXIMO_DE_DURACAO&gt;&lt;/max_years&gt;
+        &lt;/cat_info&gt;
+        &lt;subjects&gt;
+            &lt;subject&gt;
+                &lt;id&gt;&lt;ID_DISCIPLINA&gt;&lt;/id&gt;
+                &lt;subject_name&gt;&lt;NOME_DISCIPLINA&gt;&lt;/subject_name&gt;
+                &lt;credits&gt;&lt;QTDE_DE_CREDITOS&gt;&lt;/credits&gt;
+                &lt;sem_offer&gt;&lt;SEMESTRE_DE_OFERTA&gt;&lt;/sem_offer&gt;
+                &lt;classes_no&gt;&lt;NUMERO DE TURMAS&gt;&lt;/classes_no&gt;
+                &lt;tipo_nivel_atividade_mae&gt;&lt;NIVEL_ATIVIDADE_DA_DISCIPLINA&gt;&lt;/tipo_nivel_atividade_mae&gt;
+                &lt;pre_reqs&gt;&lt;PRE_REQUISITO&gt;&lt;/pre_reqs&gt;
+                &lt;ano_inicio&gt;&lt;ANO_DE_INICIO_DE_VIGENCIA_DO_PREREQ&gt;&lt;/ano_inicio&gt;
+                &lt;ano_fim&gt;&lt;ANO_DO_FIM_DE_VIGENCIA_DO_PREREQ&gt;&lt;/ano_fim&gt;
+                &lt;no_cadeia_pre_requisito&gt;&lt;NUM_CADEIA_DE_PRE_REQUISITOS&gt;&lt;/no_cadeia_pre_requisito&gt;
+                &lt;tipo_pre_requisito&gt;&lt;TIPO_PRE_REQUISITO&gt;&lt;/tipo_pre_requisito&gt;
+                &lt;tipo_nivel_atividade_exigida&gt;&lt;NIVEL_ATIVIDADE_EXIGIDA&gt;&lt;/tipo_nivel_atividade_exigida&gt;
+            &lt;/subject&gt;
+    &lt;all_configs&gt;</code></pre>
+      <ul>
+         <li><code>&lt;cat_info&gt;</code>: Agrupa informações referentes ao catálogo;</li>
+         <li><code>&lt;course_id&gt;</code>: Identificador único do curso à ser simulado (int);</li>
+         <li><code>&lt;year&gt;</code>: Ano do catálogo (int);</li>
+         <li><code>&lt;max_years&gt;</code>: Tempo máximo que os alunos tem para concluir o curso (int);</li>
+         <li><code>&lt;subjects&gt;</code>: Agrupa todas as disciplinas;</li>
+         <li><code>&lt;subject&gt;</code>: Agrupa informações referentes à uma disciplina;</li>
+         <li><code>&lt;id&gt;</code>: Identificador único da disciplina a ser simulada (int);</li>
+         <li><code>&lt;subject_name&gt;</code>: Nome da disciplina (string);</li>
+         <li><code>&lt;credits&gt;</code>: Quantidade de créditos referentes à disciplina (int);</li>
+         <li><code>&lt;sem_offer&gt;</code>: Semestre em que a disciplina é ofertada aos alunos (int);</li>
+         <li><code>&lt;classes_no&gt;</code>: Quantidade de turmas em paralelo na oferta (int);</li>
+         <li><code>&lt;tipo_nivel_atividade_mae&gt;</code>: Natureza da disciplina, pode ser 'G' para se referir à graduação, 'P' para pós-graduação ou qualquer outro valor desejado (chr);</li>
+         <li><code>&lt;pre_reqs&gt;</code>: Identificador único da disciplina que seja pré-requisito da disciplina em questão. Mesmo que não haja algum pré-requisito, é necessário ao menos uma instância dessa tag por disciplina (string ou vazio caso não haja). Para disciplinas com mais de um pré-requisito, repetir em ordem correta esta tag e as tags abaixo;</li>
+         <li><code>&lt;ano_inicio&gt;</code>: Ano em que se iniciou a vigência do pré-requisito em questão. Mesmo que não haja algum pré-requisito, é necessário ao menos uma instância dessa tag por disciplina (int ou vazio caso não haja);</li>
+         <li><code>&lt;ano_fim&gt;</code>: Ano em que se encerrou a vigência do pré-requisito em questão ('0' caso vigência do pré-requisito ainda não tenha encerrado). Mesmo que não haja algum pré-requisito, é necessário ao menos uma instância dessa tag por disciplina (int ou vazio caso não haja);</li>
+         <li><code>&lt;no_cadeia_pre_requisito&gt;</code>: Identificador único da cadeia de requisitos à qual este pré-requisito pertence (int);</li>
+         <li><code>&lt;tipo_pre_requisito&gt;</code>: O tipo de pré-requisito definirá se para cursar a disciplina, o aluno deve ter passado no pré-requisito ou ao menos cursado ('FORTE' para disciplinas que exigem aprovação no pré-requisito, 'FRACO' para disciplinas que exigem somente matrícula anterior na disciplina);</li>
+         <li><code>&lt;tipo_nivel_atividade_exigida&gt;</code>: Natureza do pré-requisito, pode ser 'G' para se referir à graduação, 'P' para pós-graduação ou qualquer outro valor desejado (chr).</li>
+      </ul>
+      <h4 id="configurações-adicionais-.xml">Configurações adicionais (.xml):</h4>
+      <p>É possível adicionar configurações adicionais para adaptar o comportamento do simulador. Devem ser inseridos em <code>imports/configs/</code>.Segue estrutura de um arquivo de configurações adicionais:</p>
+      <pre><code>&lt;all_configs&gt;
+      &lt;generic_info&gt;
+        &lt;ano_ingresso&gt;ANO_DE_INGRESSO&lt;/ano_ingresso&gt;
+      &lt;/generic_info&gt;
+      &lt;parameters&gt;
+        &lt;parameter&gt;
+          &lt;parameter_name&gt;NOME_PARAMETRO&lt;/parameter_name&gt;
+          &lt;min_grade&gt;NOTA_MINIMA&lt;/min_grade&gt;
+          &lt;max_grade&gt;NOTA_MAXIMA&lt;/max_grade&gt;
+          &lt;qtde&gt;QTDE_ALUNOS&lt;/qtde&gt;
+        &lt;/parameter&gt;
+      &lt;/parameters&gt;
+      &lt;factors&gt;
+        &lt;easy_pass_factor&gt;FATOR_FACILITADOR&lt;/easy_pass_factor&gt;
+        &lt;hard_pass_factor&gt;FATOR_DESFAVORÁVEL&lt;/hard_pass_factor&gt;
+      &lt;/factors&gt;
+      &lt;subj_dificulty&gt;
+        &lt;hard_pass&gt;
+          &lt;sub_id&gt;ID_DISCIPLINA&lt;/sub_id&gt;
+        &lt;/hard_pass&gt;
+        &lt;easy_pass&gt;
+          &lt;sub_id&gt;ID_DISCIPLINA&lt;/sub_id&gt;
+        &lt;/easy_pass&gt;
+      &lt;/subj_dificulty&gt;
+    &lt;/all_configs&gt;</code></pre>
+      <ul>
+         <li><code>&lt;all_configs&gt;</code>: Agrupa todas informações referentes à configurações adicionais do sistema;</li>
+         <li><code>&lt;generic_info&gt;</code>: Agrupa informações gerais da turma à ser simulada;</li>
+         <li><code>&lt;ano_ingresso&gt;</code>: Ano de ingresso da turma à ser simulada (int);</li>
+         <li><code>&lt;parameters&gt;</code>: Agrupa todos os parâmetros à serem adotados durante a simulação. Deve haver pelo menos um parâmetro populado;</li>
+         <li><code>&lt;parameter&gt;</code>: Agrupa informações de uma instância de parâmetro;</li>
+         <li><code>&lt;parameter_name&gt;</code>: Identificador único do parâmetro (string);</li>
+         <li><code>&lt;min_grade&gt;</code>: Nota mínima à ser sorteada pelo parâmetro. Pode sofrer redução devido a configuração de outros fatores (float);</li>
+         <li><code>&lt;max_grade&gt;</code>: Nota máxima à ser sorteada pelo parâmetro. Pode sofrer redução devido a configuração de outros fatores (float);</li>
+         <li><code>&lt;qtde&gt;</code>: Quantidade de alunos à serem sorteados neste parâmetro (int);</li>
+         <li><code>&lt;factors&gt;</code>: Agrupa configurações dos fatores que irão impactar positivamente e negativamente as notas simuladas;</li>
+         <li><code>&lt;easy_pass_factor&gt;</code>: Aponta o máximo que a nota do aluno poderá variar positivamente (0 à easy_pass_factor) caso a disciplina cursada esteja listada em <code>&lt;easy_pass&gt;</code> (int);</li>
+         <li><code>&lt;hard_pass_factor&gt;</code>: Aponta o máximo que a nota do aluno poderá variar negativamente (0 à easy_pass_factor) caso a disciplina cursada esteja listada em <code>&lt;easy_pass&gt;</code> (int);</li>
+         <li><code>&lt;subj_dificulty&gt;</code>: Agrupa os grupos de disciplinas que sofrerão alteração na nota;</li>
+         <li><code>&lt;hard_pass&gt;</code>: Agrupa disciplinas que sofrerão impacto negativo na nota;</li>
+         <li><code>&lt;easy_pass&gt;</code>: Agrupa disciplinas que sofrerão impacto positivo na nota;</li>
+         <li><code>&lt;sub_id&gt;</code>: Identificador único da disciplina a ser incluída em um dos grupos (string).</li>
+      </ul>
+      <hr />
+      <h4 id="contato">Contato:</h4>
+      <p>
+         Entre em contato através do <script type="text/javascript">
+            <!--
+            h='&#x67;&#x6d;&#x61;&#x69;&#108;&#46;&#x63;&#x6f;&#x6d;';a='&#64;';n='&#x61;&#116;&#x69;&#104;&#x65;&#46;&#x67;&#x75;&#x69;&#108;&#104;&#x65;&#114;&#x6d;&#x65;';e=n+a+h;
+            document.write('<a h'+'ref'+'="ma'+'ilto'+':'+e+'">'+'e-mail'+'<\/'+'a'+'>');
+            // -->
+         </script>
+      <noscript>&#x65;&#x2d;&#x6d;&#x61;&#x69;&#108;&#32;&#40;&#x61;&#116;&#x69;&#104;&#x65;&#46;&#x67;&#x75;&#x69;&#108;&#104;&#x65;&#114;&#x6d;&#x65;&#32;&#x61;&#116;&#32;&#x67;&#x6d;&#x61;&#x69;&#108;&#32;&#100;&#x6f;&#116;&#32;&#x63;&#x6f;&#x6d;&#x29;</noscript>
+      para tirar dúvidas à respeito da aplicação. Caso encontre algum bug ou mal-funcionamento, por favor criar um <a href="https://github.com/gatihe/simulador/issues">issue</a>.</p>
+   </div>
+</div>

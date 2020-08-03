@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+{% block title %} Home Page{% endblock %}
+{% block content %}
+<div class="container">
+
+  <div class="row row-no-gutters" style="min-height:200px; margin-top: 50px; border-bottom: solid 1px #d2d2d2; padding-bottom: 20px;">
+  <div class="col-sm-4"><h4 style="">Adicionar disciplina</h4>
+  <p style="text-align: justify; margin-top: 20px; font-style: italic;">Insira as informações da nova disciplina à ser adicionada na simulação.</p>
+  </div>
+  <div class="col-sm-8">
+
+    <form action='#' method='post'>
+      <label for="exampleFormControlSelect2"></label>
+    <div class="row">
+    <div class="col">
+      <input type="text" class="form-control" name="subject_to_be_Added" placeholder="ID Disciplina">
+    </div>
+    <div class="col">
+      <input type="number" class="form-control" name="qty_turmas" placeholder="Qtde de turmas">
+    </div>
+    </div>
+    <div class="row" style="margin-top:10px">
+    <div class="col">
+      <input type="number" class="form-control" name="ideal_sem" placeholder="Semestre ideal de oferta">
+    </div>
+    <div class="col">
+      <input type="number" class="form-control" name="qty_credits" placeholder="Quantidade de créditos">
+    </div>
+    </div>
+    <button type="submit" value="submit" name="new_subject" class="btn btn-primary" style="margin-top:20px; float:right; width:200px;">Adicionar disciplina</button>
+    </form>
+  </div>
+</div>
+
+
+
+<div class="row row-no-gutters" style="min-height:200px; margin-top: 50px; border-bottom: solid 1px #d2d2d2; padding-bottom: 20px;">
+<div class="col-sm-4">
+  <h4 style="margin-top:0px;">Remover disciplinas</h4>
+  <p style="text-align: justify; margin-top: 20px; font-style: italic;">Selecione uma ou mais disciplina para remover da simulação.</p>
+
+</div>
+<div class="col-sm-8">
+
+  <form action='#' method='post' style="vertical-align: center;">
+  <div class="form-group">
+  <select multiple class="form-control" id="exampleFormControlSelect2" name="subj_rmv">
+  {% for subject in subjects %}
+  <option>{{ subject }}</option>
+  {% endfor %}
+  </select>
+  </div>
+  <button type="submit" value="submit" name="remove_subjects" class="btn btn-primary" style="float:right; margin-top:20px; width: 200px;">Remover disciplinas</button>
+  </form>
+</div>
+</div>
+
+
+<div class="row row-no-gutters" style="min-height:200px; margin-top: 50px;padding-bottom: 20px;">
+<div class="col-sm-4">
+<h4 style="margin-top:0px;">Alterar quantidade de turmas</h4>
+<p style="text-align: justify; margin-top: 20px; font-style: italic;">Insira o código da disciplina e a nova quantidade de turmas a ser simulada.</p>
+</div>
+<div class="col-sm-8">
+
+  <form action='#' method='post'>
+  <div class="row">
+  <div class="col">
+    <input type="text" class="form-control" name="subject_to_change_Classes_No" placeholder="ID Disciplina">
+  </div>
+  <div class="col">
+    <input type="number" name="new_classes_no" class="form-control" placeholder="Nova qtde. de turmas">
+  </div>
+  </div>
+  <button type="submit" name="set_net_classes_no" value="submit" class="btn btn-primary" style="float:right; margin-top:20px; width: 200px;">Alterar turmas</button>
+  </form>
+
+
+</div>
+</div>
+
+
+</div>
+
+{% endblock %}

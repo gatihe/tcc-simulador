@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+{% block title %}Parâmetros{% endblock %}
+{% block content %}
+<div class="container">
+   <div class="row row-no-gutters" style="min-height:200px; margin-top: 50px; border-bottom: solid 1px #d2d2d2; padding-bottom: 20px;">
+      <div class="col-sm-4">
+         <h4 style="">Adicionar parâmetro</h4>
+         <p style="text-align: justify; margin-top: 20px; font-style: italic;">Configure um novo pré-requisito para uma disciplina.</p>
+      </div>
+      <div class="col-sm-8">
+         <form action='#' method='post'>
+            <label for="exampleFormControlSelect2"></label>
+            <div class="row">
+               <div class="col">
+                  <input type="text" class="form-control" name="new_param_name" placeholder="Nome do parâmetro">
+               </div>
+               <div class="col">
+                  <input type="number" class="form-control" name="new_param_qtd" placeholder="Quantidade de alunos">
+               </div>
+            </div>
+            <div class="row" style="margin-top:10px">
+               <div class="col">
+                  <input type="number" class="form-control" name="new_param_min" placeholder="Nota mínima">
+               </div>
+               <div class="col">
+                  <input type="number" class="form-control" name="new_param_max" placeholder="Nota máxima">
+               </div>
+            </div>
+            <button type="submit" value="submit" name="new_param" class="btn btn-primary" style="margin-top:20px; float:right; width:200px;">Adicionar parâmetro</button>
+         </form>
+      </div>
+   </div>
+   <div class="row row-no-gutters" style="min-height:200px; margin-top: 50px; margin-bottom: 20px;">
+      <div class="col-sm-4">
+         <h4 style="margin-top:0px;">Listar parâmetros</h4>
+         <p style="text-align: justify; margin-top: 20px; font-style: italic;">Selecione um ou mais parâmetros para ver suas propriedades.</p>
+      </div>
+      <div class="col-sm-8">
+         <form action="#" method="post">
+            <div class="form-group">
+               <select multiple class="form-control" id="exampleFormControlSelect2" name="selected_params">
+                  {% for param_name in param_names %}
+                  <option>{{ param_name }}</option>
+                  {% endfor %}
+               </select>
+            </div>
+            <button name="get_params_info" type="submit" class="btn btn-primary" style="margin-top:20px; float:right; width:200px;">Listar parâmetros</button>
+         </form>
+      </div>
+   </div>
+   {% if selected_params |count !=0 %}
+   {% for selected_param in selected_params %}
+   <div class="accordion" id="accordionExample" style="margin-top:15px, margin-bottom:20px;">
+      <div class="card">
+         <div class="card-header" id="headingOne">
+            <h2 class="mb-0">
+               <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target=#{{selected_param}} aria-expanded="true" aria-controls="collapseOne">
+               {{ selected_param }}
+               </button>
+            </h2>
+         </div>
+         <div id={{selected_param}} class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample" style="margin-top:15px; padding-bottom:10px;">
+            <div class="card-body">
+               <div class="row row-no-gutters" style="min-height:200px; margin-bottom: 20px;">
+                  <div class="col-sm-4">
+                     <h4 style="margin-top:0px;">Propriedades:</h4>
+                     <ul>
+                        <li>Nome: {{params_dict[selected_param].get('name')}}</li>
+                        <li>Nota máxima: {{params_dict[selected_param].get('max_grade')}}</li>
+                        <li>Nota mínima: {{params_dict[selected_param].get('min_grade')}}</li>
+                        <li>Quantidade de alunos: {{params_dict[selected_param].get('qty_students')}}</li>
+                     </ul>
+                  </div>
+                  <div class="col-sm-8">
+                     <form action='#' method='post'>
+                        <div class="input-group mb-3" style="">
+                           <input type="hidden" id="custId" name="pre_req_will_be_Added" value="{{selected_param}}">
+                           <div class="input-group-prepend">
+                              <button type="submit" name="add_subject" value="submit" class="btn btn-outline-secondary disabled">Alterar propriedade:</button>
+                              <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                              <span class="sr-only">Toggle Dropdown</span>
+                              </button>
+                              <div class="dropdown-menu">
+                                 <button type="submit" class="dropdown-item" name="edit_name" value="submit">Nome</button>
+                                 <button type="submit" class="dropdown-item" name="edit_min" value="submit">Nota mínima</button>
+                                 <button type="submit" class="dropdown-item" name="edit_max" value="submit">Nota máxima</button>
+                                 <button type="submit" class="dropdown-item" name="edit_qty" value="submit">Quantidade de alunos</button>
+                                 <div class="dropdown-divider"></div>
+                                 <button type="submit" class="dropdown-item" name="del_param" value="submit">Excluir parâmetro</button>
+                              </div>
+                           </div>
+                           <input type="text" class="form-control" aria-label="Text input with segmented dropdown button" name="new_param_value" placeholder="Novo valor">
+                           <input type="hidden" id="custId" name="param_to_edit" value="{{selected_param}}">
+                        </div>
+                     </form>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+   </div>
+   {% endfor %}
+   <div style="margin-bottom:30px;">
+      <br><br>
+   </div>
+   {% endif %}
+</div>
+{% endblock %}

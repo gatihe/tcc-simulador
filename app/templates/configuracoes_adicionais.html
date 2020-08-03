@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+{% block title %} Home Page{% endblock %}
+{% block content %}
+<div class="container">
+
+  <div class="row row-no-gutters" style="min-height:200px; margin-top: 50px; border-bottom: solid 1px #d2d2d2; padding-bottom: 20px;">
+  <div class="col-sm-4"><h4 style="">Sabotagem e recuperação</br>de notas</h4>
+  <p style="text-align: justify; margin-top: 20px; font-style: italic;">Insira novos valores para alterar propriedades de sabotagem e recuperação de notas.</p>
+  </div>
+  <div class="col-sm-8">
+    <form style="margin-top:30px;" action="#" method="post">
+
+      <div class="row">
+       <div class="col">
+         <input type="number" name="positive_impact" step="0.01" max="10" min="0" class="form-control" placeholder="Impacto positivo">
+       </div>
+       <div class="col">
+         <input type="number" name="negative_impact" step="0.01" max="10" min="0" class="form-control" placeholder="Impacto negativo">
+       </div>
+       <div class="col">
+         <input type="number" name="grade_percentage_affected" step="0.01" max="1" min="0" class="form-control" placeholder="% de alunos afetados">
+       </div>
+     </div>
+     <button name="set_sab_rec_grade" type="submit" class="btn btn-primary" style="margin-top:20px; float:right; width:200px;">Enviar novos valores</button>
+  </form>
+  </div>
+  </div>
+
+
+  <div class="row row-no-gutters" style="min-height:200px; margin-top: 50px; border-bottom: solid 1px #d2d2d2; padding-bottom: 20px;">
+  <div class="col-sm-4"><h4 style="">Sabotagem e recuperação</br>de frequência</h4>
+  <p style="text-align: justify; margin-top: 20px; font-style: italic;">Insira novos valores para alterar propriedades de sabotagem e recuperação de frequência.</p>
+  </div>
+  <div class="col-sm-8">
+
+    <form style="margin-top:30px;" action="#" method="post">
+
+      <div class="row">
+       <div class="col">
+         <input type="number" name="positive_impact" step="0.01" max="100" min="0" class="form-control" placeholder="Impacto positivo">
+       </div>
+       <div class="col">
+         <input type="number" name="negative_impact" step="0.01" max="100" min="0" class="form-control" placeholder="Impacto negativo">
+       </div>
+       <div class="col">
+         <input type="number" name="frequency_percentage_affected" step="0.01" max="1" min="0" class="form-control" placeholder="% de alunos afetados">
+       </div>
+     </div>
+     <button name="set_sab_rec_frequency" style="margin-top:20px; float:right; width:200px;" type="submit" class="btn btn-primary">Enviar novos valores</button>
+    </form>
+
+  </div>
+  </div>
+
+
+  <div class="row row-no-gutters" style="min-height:200px; margin-top: 50px; border-bottom: solid 1px #d2d2d2; padding-bottom: 20px;">
+  <div class="col-sm-4"><h4 style="">Disciplinas fáceis e difíceis</h4>
+  <p style="text-align: justify; margin-top: 20px; font-style: italic;">Insira novos valores para alterar o impacto de disciplinas fáceis e difíceis nas notas.</p>
+  </div>
+  <div class="col-sm-8">
+
+    <form style="margin-top:30px;" action="#" method="post">
+      <div class="row">
+       <div class="col">
+
+         <input type="number" step="0.01" name="easy_factor" max="10" min="0" class="form-control" placeholder="Disciplinas difíceis">
+       </div>
+       <div class="col">
+
+         <input type="number" step="0.01" name="hard_factor" max="10" min="0" class="form-control" placeholder="Disciplinas difíceis">
+       </div>
+     </div>
+     <button name="set_easy_hard_passes" style="margin-top:20px; float:right; width:200px;" type="submit" class="btn btn-primary">Enviar novos valores</button>
+    </form>
+
+  </div>
+  </div>
+
+
+
+
+  <div class="row row-no-gutters" style="min-height:200px; margin-top: 50px; border-bottom: solid 1px #d2d2d2; padding-bottom: 20px;">
+  <div class="col-sm-4"><h4 style="">Alteração abrupta na nota</h4>
+  <p style="text-align: justify; margin-top: 20px; font-style: italic;">Insira novos valores para alterar o impacto de disciplinas com alteração abrupta nas notas da turma.</p>
+  </div>
+  <div class="col-sm-8">
+
+    <form style="margin-top:30px;" action="#" method="post">
+      <div class="row">
+        <div class="col">
+          <input name="easy_hard_factors_hard" type="number" step="0.01" max="10" min="0" class="form-control" placeholder="(-) Alteração negativa máxima">
+        </div>
+       <div class="col">
+         <input name="easy_hard_factors_easy" type="number" step="0.01" max="10" min="0" class="form-control" placeholder="(+) Alteração positiva máxima">
+       </div>
+     </div>
+     <button name="set_abrupt_alteration" style="margin-top:20px; float:right; width:200px;" type="submit" class="btn btn-primary">Enviar novos valores</button>
+    </form>
+
+  </div>
+  </div>
+
+
+
+
+
+
+
+
+
+</div>
+
+{% endblock %}

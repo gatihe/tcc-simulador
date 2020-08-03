@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block title %}Home Page{% endblock %}
+{% block content %}
+<div class="container">
+   <div class="row">
+      <div class="col">
+      </div>
+      <div class="col-10">
+         <h1 id="gerador-de-notas-para-disciplinas">Gerador de notas para disciplinas</h1>
+         <p>Este projeto é um Trabalho de Conclusão de Curso para o curso de Sistemas de Informação da Faculdade de Tecnologia da Unicamp. Este projeto objetiva gerar e adaptar conjuntos de dados para dois sistemas de mineração de dados educacionais em elaboração na Faculdade de Tecnologia da UNICAMP. O primeiro sistema é um visualizador de conjuntos de históricos escolares. O foco deste trabalho é desenvolver um gerador de conjuntos de históricos escolares simulados. Esses conjuntos devem ter características programáveis, como por exemplo padrões específicos que se deseja que sejam possíveis de visualizar, e que serão derivadas de demandas de análise de dados já informadas por coordenadores de curso de graduação.</p>
+         <h5 id="áreas-do-conhecimento-envolvidas-no-trabalho">Áreas do conhecimento envolvidas no trabalho:</h5>
+         <ul>
+         <li>Visualização da Informação</li>
+         <li>Mineração de dados educacionais</li>
+         {% if "user" not in session: %}
+         <form class="form-inline my-2 my-lg-0" action="/login">
+            <a href="/login"><button class="btn btn-outline-success my-2 my-sm-0">Login</button></a>
+         </form>
+         {% endif %}
+      </div>
+      <div class="col">
+      </div>
+   </div>
+</div>
+{% endblock %}

@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+{% block title %}Importações{% endblock %}
+{% block content %}
+<div class="container">
+
+  <div class="row row-no-gutters" style="min-height:200px; margin-top: 50px; padding-bottom:20px; border-bottom: solid 1px #d2d2d2">
+     <div class="col-sm-4">
+        <h4 style="margin-top:0px;">Biblioteca</h4>
+        <p style="text-align: justify; margin-top: 20px; font-style: italic;">Gerencie arquivos importados. Escolha os arquivos à serem utilizados para fornecer informações de catálogo e configurações.</p>
+     </div>
+     <div class="col-sm-8">
+       {% if available_config_imports is defined or available_catalogo_imports is defined%}
+       <div id="accordion" style="margin-top:10px">
+         <div class="card">
+           <div class="card-header" id="headingOne">
+             <h5 class="mb-0">
+               <button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                 Catálogos
+               </button>
+             </h5>
+           </div>
+
+           <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
+             <div class="card-body">
+               <ul class="list-group">
+                 <form action="#" method="post">
+                 {% for available_import in available_catalogo_imports %}
+                 <input type="hidden" id="catalogo_id" name="current_catalogo" value="{{available_import}}">
+                  <li value="{{ available_import }}" class="list-group-item">{{ available_import }} <span class='pull-right'><button type="submit" name="set_current_catalogo" value="submit"> <i class="fa fa-check" aria-hidden="true"></i></button>  <button type="submit" name="del_catalogo" value="submit"><i class="fa fa-trash" aria-hidden="true"></i> </button></span></li>
+                  {% endfor %}
+                </form>
+               </ul>
+             </div>
+           </div>
+         </div>
+         <div class="card">
+           <div class="card-header" id="headingTwo">
+             <h5 class="mb-0">
+               <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                 Configurações
+               </button>
+             </h5>
+           </div>
+           <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
+             <div class="card-body">
+               <ul class="list-group">
+                 <form action="#" method="post">
+                 {% for available_import in available_config_imports %}
+                 <input type="hidden" id="config_id" name="current_config" value="{{available_import}}">
+                  <li value="{{ available_import }}" class="list-group-item">{{ available_import }} <span class='pull-right'> <button type="submit" name="set_current_config" value="submit"><i class="fa fa-check" aria-hidden="true"></i></button>   <button type="submit" name="del_config" value="submit"><i class="fa fa-trash" aria-hidden="true"></i> </button></span></li>
+                  {% endfor %}
+                  </form>
+               </ul>
+             </div>
+           </div>
+         </div>
+       </div>
+       {% endif %}
+
+       <div class="card">
+         <div class="card-header">
+           Padrões
+         </div>
+         <div class="card-body">
+           <p class="card-text">Atualmente as simulações e configurações estão feitas baseadas nos arquivos:</p>
+             {% if user_default_files[0] == 'not_set' %}
+             <p class="card-text"><b>Catálogo:</b> Não há arquivo de catálogo configurado como padrão.</p>
+             {% else %}
+             <p class="card-text"><b>Catálogo:</b> <i>{{ user_default_files[0] }}</i>.</p>
+             {% endif %}
+             {% if user_default_files[1] == 'not_set' %}
+             <p class="card-text"><b>Configurações:</b> Não há arquivo de configurações definido como padrão.</p>
+             {% else %}
+             <p class="card-text"><b>Configurações:</b> <i>{{ user_default_files[1] }}</i>.</p>
+             {% endif %}
+         </div>
+       </div>
+     </div>
+     </div>
+
+
+  <div class="row row-no-gutters" style="margin-top:50px;">
+     <div class="col-sm-4">
+        <h4 style="margin-top:0px;">Importar novos arquivos</h4>
+        <p style="text-align: justify; margin-top: 20px; font-style: italic;">Configure um novo pré-requisito para uma disciplina.</p>
+     </div>
+     <div class="col-sm-8">
+       <form action='/importacoes/' method='post' enctype="multipart/form-data" style="margin-top:10px;">
+          <div class="input-group mb-3">
+             <div class="custom-file">
+                <input type="file" class="custom-file-input" id="inputGroupFile01" name="catalogo">
+                <label class="custom-file-label" for="inputGroupFile01">Escolher catálogo</label>
+             </div>
+          </div>
+          <div class="input-group mb-3">
+             <div class="custom-file">
+                <input type="file" class="custom-file-input" id="inputGroupFile01" name="configs">
+                <label class="custom-file-label" for="inputGroupFile01">Escolher configuração adicional</label>
+             </div>
+          </div>
+          <button name="importar" type="submit" value="submit" class="btn btn-primary">Importar</button>
+       </form>
+     </div>
+     </div>
+
+
+
+
+
+
+</br></br>
+
+
+
+</div>
+{% endblock %}
