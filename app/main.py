@@ -481,7 +481,7 @@ def logout():
 
 @app.route('/download_curso/')
 def download_curso():
-    with open("app/exports/curso.csv") as fp:
+    with open("/home/guiati9/tcc-simulador/app/exports/curso.csv") as fp:
         csv = fp.read()
     return Response(
         csv,
@@ -491,7 +491,7 @@ def download_curso():
 
 @app.route('/download_info_std/')
 def download_info_std():
-    with open("app/exports/info_std.csv") as fp:
+    with open("/home/guiati9/tcc-simulador/app/exports/info_std.csv") as fp:
         csv = fp.read()
     return Response(
         csv,
@@ -501,7 +501,7 @@ def download_info_std():
 
 @app.route('/download_historicos/')
 def download_historicos():
-    with open("app/exports/historicos.csv") as fp:
+    with open("/home/guiati9/tcc-simulador/app/exports/historicos.csv") as fp:
         csv = fp.read()
     return Response(
         csv,
@@ -511,7 +511,7 @@ def download_historicos():
 
 @app.route('/download_prerequisitos/')
 def download_prerequisitos():
-    with open("app/exports/prerequisitos.csv") as fp:
+    with open("/home/guiati9/tcc-simulador/app/exports/prerequisitos.csv") as fp:
         csv = fp.read()
     return Response(
         csv,
@@ -521,7 +521,7 @@ def download_prerequisitos():
 
 @app.route('/download_visualizacao/')
 def projeto_rafael():
-    with open("app/exports/export_visualizacao.csv") as fp:
+    with open("/home/guiati9/tcc-simulador/app/exports/export_visualizacao.csv") as fp:
         csv = fp.read()
     return Response(
         csv,
