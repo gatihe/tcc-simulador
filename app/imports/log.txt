@@ -19,17 +19,41 @@ Impacto negativo: - 0 á 2
 Impacto positivo: + 0 á 2
 -------------------
 -------------------
+- Disciplina: SI912;
+- Semestre sorteado: 3;
+- Impacto: positivo.
+-------------------
+- Disciplina: SI702;
+- Semestre sorteado: 9;
+- Impacto: positivo.
+-------------------
+- Disciplina: SI404;
+- Semestre sorteado: 9;
+- Impacto: positivo.
+-------------------
+- Disciplina: SI400;
+- Semestre sorteado: 6;
+- Impacto: negativo.
+-------------------
+- Disciplina: SI801;
+- Semestre sorteado: 2;
+- Impacto: positivo.
+-------------------
+- Disciplina: SI300;
+- Semestre sorteado: 1;
+- Impacto: positivo.
+-------------------
 -------------------------------------------------------------------
 Sabotagem e recuperação de notas: 
 Qtde. de alunos: 9.0
-Qtde. alunos com impacto negativo: 4
+Qtde. alunos com impacto negativo: 5
 Fator de impacto negativo: - 0 à 2
-Qtde. alunos com impacto positivo: 5
+Qtde. alunos com impacto positivo: 4
 Fator de impacto positivo: + 0 à 2
 -------------------------------------------------------------------
 Sabotagem e recuperação de frequência: 
 Qtde. de alunos: 9.0
-Qtde. alunos com impacto negativo: 4
+Qtde. alunos com impacto negativo: 2
 Fator de impacto negativo: - 0 à 40
-Qtde. alunos com impacto positivo: 5
+Qtde. alunos com impacto positivo: 7
 Fator de impacto positivo: + 0 à 40

@@ -21,7 +21,7 @@ config = {
     "messagingSenderId": "381390670054",
     "appId": "1:381390670054:web:a376551235a8d4f88b9327",
     "measurementId": "G-ZH6T8K1388",
-    "serviceAccount": "/home/guiati9/tcc-simulador/app/imports/configs/simulador-75b51-firebase-adminsdk-cv8yl-ee6529fce6.json"
+    "serviceAccount": "app/imports/configs/simulador-75b51-firebase-adminsdk-cv8yl-ee6529fce6.json"
     }
 firebase = pyrebase.initialize_app(config)
 
@@ -60,8 +60,9 @@ def empty_session():
 def home():
     global user_default_files
     global simulation_lock
-    global user_uid
-    return render_template('index.html',array_test = [0,2,4,6], simulation_lock = simulation_lock, user_default_files = user_default_files)
+    if user_uid in session:
+            return render_template('index.html',array_test = [0,2,4,6], simulation_lock = simulation_lock, user_default_files = user_default_files, uid = user_uid)
+    return render_template('index.html',array_test = [0,2,4,6], simulation_lock = simulation_lock, user_default_files = user_default_files, uid = user_uid)
 
 @app.route('/login/', methods=['POST', 'GET'])
 def login():
@@ -76,14 +77,15 @@ def login():
         try:
             email = auth.sign_in_with_email_and_password(email,password)
             auth.get_account_info(email['idToken'])
-            session["user"] = email['idToken']
             user_uid = email['localId']
+            #session["user"] = email['localId']
+            session[user_uid] = email['localId']
             print(user_uid)
         except:
             return "Please check your credentials"
         return redirect(url_for("user"))
     else:
-        if "user" in session:
+        if user_uid in session:
             return redirect(url_for("user"))
         return render_template("login.html",simulation_lock = simulation_lock)
 
@@ -91,8 +93,7 @@ def login():
 def user():
     global user_uid
     global simulation_lock
-    if "user" in session:
-        user = session["user"]
+    if user_uid in session:
         return redirect(url_for("home"))
         #return ('<h1>'+user+'</h1>')
     else:
@@ -103,7 +104,6 @@ def user():
 @app.route('/importacoes/', methods=['GET','POST'])
 def importacoes():
     global simulation_lock
-    global user_uid
     global params
     global factors
     global hard_passes
@@ -121,8 +121,9 @@ def importacoes():
     global storage
     available_config_imports = []
     available_catalogo_imports = []
-    if "user" in session:
-        user = session["user"]
+    if user_uid in session:
+        print(session)
+        user = session[user_uid]
         global simulation_lock
         available_config_imports, available_catalogo_imports = list_imports(user_uid, user_default_files)
         #return ('<h1>'+user+'</h1>')
@@ -460,7 +461,7 @@ def simulacao():
         simulation, simulation_array, tempo_max_integralizacao, qtde_de_disciplinas_semestre_impar, qtde_de_disciplinas_semestre_par, subss, students_data, prereqs_report_export, std_records, std_info_export, file = new_simulation(params, factors, hard_passes, easy_passes, generic_config_info, subjects, turmas, prereqs, semoffers, credits, cat_info, prereq_report, grade_sab_rec_factors, frequency_sab_rec_factors, easy_hard_factors)
         #with open("app/imports/log.txt", "r") as f:
             #content = f.read()
-        a_file = open("/home/guiati9/tcc-simulador/app/imports/log.txt", "r")
+        a_file = open("app/imports/log.txt", "r")
         lines = a_file.readlines()
         return render_template('simulacao.html', simulation_table=[simulation.to_html(classes='table table-striped table-sm', header="false",justify="left", border="0", index=False)], prereqs_table=[prereqs_report_export.to_html(classes='table table-striped table-sm', header="false",justify="left", border="0", index=False)],std_records_table=[std_records.to_html(classes='table table-striped table-sm', header="false",justify="left", border="0", index=False)],std_info_table=[std_info_export.to_html(classes='table table-striped table-sm', header="false",justify="left", border="0", index=False)],params = subjects, simulation_lock = simulation_lock, lines = lines)
     else:
@@ -481,7 +482,7 @@ def logout():
 
 @app.route('/download_curso/')
 def download_curso():
-    with open("/home/guiati9/tcc-simulador/app/exports/curso.csv") as fp:
+    with open("app/exports/curso.csv") as fp:
         csv = fp.read()
     return Response(
         csv,
@@ -491,7 +492,7 @@ def download_curso():
 
 @app.route('/download_info_std/')
 def download_info_std():
-    with open("/home/guiati9/tcc-simulador/app/exports/info_std.csv") as fp:
+    with open("app/exports/info_std.csv") as fp:
         csv = fp.read()
     return Response(
         csv,
@@ -501,7 +502,7 @@ def download_info_std():
 
 @app.route('/download_historicos/')
 def download_historicos():
-    with open("/home/guiati9/tcc-simulador/app/exports/historicos.csv") as fp:
+    with open("app/exports/historicos.csv") as fp:
         csv = fp.read()
     return Response(
         csv,
@@ -511,7 +512,7 @@ def download_historicos():
 
 @app.route('/download_prerequisitos/')
 def download_prerequisitos():
-    with open("/home/guiati9/tcc-simulador/app/exports/prerequisitos.csv") as fp:
+    with open("app/exports/prerequisitos.csv") as fp:
         csv = fp.read()
     return Response(
         csv,
@@ -521,7 +522,7 @@ def download_prerequisitos():
 
 @app.route('/download_visualizacao/')
 def projeto_rafael():
-    with open("/home/guiati9/tcc-simulador/app/exports/export_visualizacao.csv") as fp:
+    with open("app/exports/export_visualizacao.csv") as fp:
         csv = fp.read()
     return Response(
         csv,
