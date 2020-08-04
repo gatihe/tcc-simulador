@@ -21,7 +21,7 @@ config = {
     "messagingSenderId": "381390670054",
     "appId": "1:381390670054:web:a376551235a8d4f88b9327",
     "measurementId": "G-ZH6T8K1388",
-    "serviceAccount": "app/imports/configs/simulador-75b51-firebase-adminsdk-cv8yl-ee6529fce6.json"
+    "serviceAccount": "/home/guiati9/tcc-simulador/app/imports/configs/simulador-75b51-firebase-adminsdk-cv8yl-ee6529fce6.json"
     }
 firebase = pyrebase.initialize_app(config)
 
@@ -460,7 +460,7 @@ def simulacao():
         simulation, simulation_array, tempo_max_integralizacao, qtde_de_disciplinas_semestre_impar, qtde_de_disciplinas_semestre_par, subss, students_data, prereqs_report_export, std_records, std_info_export, file = new_simulation(params, factors, hard_passes, easy_passes, generic_config_info, subjects, turmas, prereqs, semoffers, credits, cat_info, prereq_report, grade_sab_rec_factors, frequency_sab_rec_factors, easy_hard_factors)
         #with open("app/imports/log.txt", "r") as f:
             #content = f.read()
-        a_file = open("app/imports/log.txt", "r")
+        a_file = open("/home/guiati9/tcc-simulador/app/imports/log.txt", "r")
         lines = a_file.readlines()
         return render_template('simulacao.html', simulation_table=[simulation.to_html(classes='table table-striped table-sm', header="false",justify="left", border="0", index=False)], prereqs_table=[prereqs_report_export.to_html(classes='table table-striped table-sm', header="false",justify="left", border="0", index=False)],std_records_table=[std_records.to_html(classes='table table-striped table-sm', header="false",justify="left", border="0", index=False)],std_info_table=[std_info_export.to_html(classes='table table-striped table-sm', header="false",justify="left", border="0", index=False)],params = subjects, simulation_lock = simulation_lock, lines = lines)
     else:

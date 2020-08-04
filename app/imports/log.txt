@@ -1,5 +1,5 @@
 ----------------------- LOG DA SIMULACAO --------------------------
-- Quantidade de alunos simulados: 22.
+- Quantidade de alunos simulados: 30.
 - Tempo máximo de integralização: 12.
 - Máximo de créditos por semestre: 28.
 -------------------------------------------------------------------
@@ -19,53 +19,37 @@ Impacto negativo: - 0 á 2
 Impacto positivo: + 0 á 2
 -------------------
 -------------------
-- Disciplina: SI101;
-- Semestre sorteado: 3;
-- Impacto: negativo.
--------------------
 - Disciplina: TT050;
-- Semestre sorteado: 4;
+- Semestre sorteado: 2;
 - Impacto: negativo.
 -------------------
-- Disciplina: SI100;
+- Disciplina: SI916;
 - Semestre sorteado: 9;
 - Impacto: positivo.
 -------------------
-- Disciplina: SI700;
-- Semestre sorteado: 7;
-- Impacto: negativo.
--------------------
-- Disciplina: SI101;
-- Semestre sorteado: 11;
-- Impacto: positivo.
--------------------
-- Disciplina: SI450;
-- Semestre sorteado: 8;
-- Impacto: positivo.
--------------------
-- Disciplina: ST562;
-- Semestre sorteado: 6;
-- Impacto: negativo.
--------------------
-- Disciplina: SI305;
+- Disciplina: EB102;
 - Semestre sorteado: 10;
 - Impacto: negativo.
 -------------------
-- Disciplina: SI701;
+- Disciplina: ST211;
+- Semestre sorteado: 1;
+- Impacto: positivo.
+-------------------
+- Disciplina: SI405;
 - Semestre sorteado: 3;
 - Impacto: negativo.
 -------------------
 -------------------------------------------------------------------
 Sabotagem e recuperação de notas: 
-Qtde. de alunos: 7.0
-Qtde. alunos com impacto negativo: 3
+Qtde. de alunos: 9.0
+Qtde. alunos com impacto negativo: 5
 Fator de impacto negativo: - 0 à 2
 Qtde. alunos com impacto positivo: 4
 Fator de impacto positivo: + 0 à 2
 -------------------------------------------------------------------
 Sabotagem e recuperação de frequência: 
-Qtde. de alunos: 7.0
-Qtde. alunos com impacto negativo: 4
+Qtde. de alunos: 9.0
+Qtde. alunos com impacto negativo: 3
 Fator de impacto negativo: - 0 à 40
-Qtde. alunos com impacto positivo: 3
+Qtde. alunos com impacto positivo: 6
 Fator de impacto positivo: + 0 à 40
