@@ -9,7 +9,6 @@
         <p style="text-align: justify; margin-top: 20px; font-style: italic;">Gerencie arquivos importados. Escolha os arquivos à serem utilizados para fornecer informações de catálogo e configurações.</p>
      </div>
      <div class="col-sm-8">
-       {% if available_config_imports is defined or available_catalogo_imports is defined%}
        <div id="accordion" style="margin-top:10px">
          <div class="card">
            <div class="card-header" id="headingOne">
@@ -23,12 +22,14 @@
            <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
              <div class="card-body">
                <ul class="list-group">
-                 <form action="#" method="post">
-                 {% for available_import in available_catalogo_imports %}
-                 <input type="hidden" id="catalogo_id" name="current_catalogo" value="{{available_import}}">
-                  <li value="{{ available_import }}" class="list-group-item">{{ available_import }} <span class='pull-right'><button type="submit" name="set_current_catalogo" value="submit"> <i class="fa fa-check" aria-hidden="true"></i></button>  <button type="submit" name="del_catalogo" value="submit"><i class="fa fa-trash" aria-hidden="true"></i> </button></span></li>
+
+                  {% for available_import in available_catalog_imports %}
+                  <form action="#" method="post">
+                  <input type="hidden" id="config_id" name="catalog_current" value="{{available_import}}">
+                  <li class="list-group-item">{{available_import}} <span class='pull-right'><button type="submit" name="set_catalogo" value="submit"> <i class="fa fa-check" aria-hidden="true"></i></button>  <button type="submit" name="del_catalogo" value="submit"><i class="fa fa-trash" aria-hidden="true"></i> </button></span></li>
+                  </form>
                   {% endfor %}
-                </form>
+
                </ul>
              </div>
            </div>
@@ -44,18 +45,17 @@
            <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
              <div class="card-body">
                <ul class="list-group">
-                 <form action="#" method="post">
                  {% for available_import in available_config_imports %}
-                 <input type="hidden" id="config_id" name="current_config" value="{{available_import}}">
-                  <li value="{{ available_import }}" class="list-group-item">{{ available_import }} <span class='pull-right'> <button type="submit" name="set_current_config" value="submit"><i class="fa fa-check" aria-hidden="true"></i></button>   <button type="submit" name="del_config" value="submit"><i class="fa fa-trash" aria-hidden="true"></i> </button></span></li>
-                  {% endfor %}
-                  </form>
+                 <form action="#" method="post">
+                 <input type="hidden" id="config_id" name="config_current" value="{{available_import}}">
+                 <li class="list-group-item">{{available_import}} <span class='pull-right'><button type="submit" name="set_config" value="submit"> <i class="fa fa-check" aria-hidden="true"></i></button>  <button type="submit" name="del_config" value="submit"><i class="fa fa-trash" aria-hidden="true"></i> </button></span></li>
+                 </form>
+                 {% endfor %}
                </ul>
              </div>
            </div>
          </div>
        </div>
-       {% endif %}
 
        <div class="card">
          <div class="card-header">
@@ -63,15 +63,15 @@
          </div>
          <div class="card-body">
            <p class="card-text">Atualmente as simulações e configurações estão feitas baseadas nos arquivos:</p>
-             {% if user_default_files[0] == 'not_set' %}
+             {% if user_default_catalog == 'not_set' %}
              <p class="card-text"><b>Catálogo:</b> Não há arquivo de catálogo configurado como padrão.</p>
              {% else %}
-             <p class="card-text"><b>Catálogo:</b> <i>{{ user_default_files[0] }}</i>.</p>
+             <p class="card-text"><b>Catálogo:</b> <i>{{ user_default_catalog }}</i>.</p>
              {% endif %}
-             {% if user_default_files[1] == 'not_set' %}
+             {% if user_default_config == 'not_set' %}
              <p class="card-text"><b>Configurações:</b> Não há arquivo de configurações definido como padrão.</p>
              {% else %}
-             <p class="card-text"><b>Configurações:</b> <i>{{ user_default_files[1] }}</i>.</p>
+             <p class="card-text"><b>Configurações:</b> <i>{{ user_default_config }}</i>.</p>
              {% endif %}
          </div>
        </div>

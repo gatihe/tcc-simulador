@@ -12,10 +12,9 @@
          <ul>
          <li>Visualização da Informação</li>
          <li>Mineração de dados educacionais</li>
-         {% if uid in session: %}
+         {% if "user_id" in session %}
          Olá {{ uid }}
-         {%  endif %}
-         {% if uid not in session: %}
+         {% else %}
          <form class="form-inline my-2 my-lg-0" action="/login">
             <a href="/login"><button class="btn btn-outline-success my-2 my-sm-0">Login</button></a>
          </form>

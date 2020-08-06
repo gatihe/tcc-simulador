@@ -33,19 +33,79 @@ class NotASubject(Error):
 class NoPrereqs(Error):
     pass
 ####Check for error functions:
+def set_catalogo_as_default(storage, user_uid, file_name):
+    temp_dir = tempfile.TemporaryDirectory()
+    catalog_path_file = temp_dir.name+"/"+"default_catalog.xml"
+    full_file_path = user_uid+"/"+file_name
+    full_file_path = full_file_path.replace('%2F','/')
+    print(catalog_path_file)
+    print(full_file_path)
+    current_config = storage.child(full_file_path).download(catalog_path_file)
+    filename=current_config
+
+    if filename is not None or file_name is not 'not_set':
+        try:
+            f=open(catalog_path_file, 'r')
+            subjects = getting_subjects_config_from_file(catalog_path_file)
+            turmas = getting_turmas_config_from_file(catalog_path_file)
+            prereqs = getting_prereqs_config_from_file(catalog_path_file)
+            semoffers = getting_semoffer_config_from_file(catalog_path_file)
+            credits = getting_credits_config_from_file(catalog_path_file)
+            cat_info = getting_catalog_info_from_file(catalog_path_file)
+            prereq_report = getting_prereq_report_from_file(catalog_path_file)
+            f.close()
+            temp_dir.cleanup()
+            importou_config = 1
+            print(subjects)
+        except SyntaxError:
+            print("\nProblema identificado ao importar. Verifique seu arquivo "+filename+".")
+            pass
+        except IOError:
+            print("\nProblema identificado ao importar. Verifique seu arquivo "+filename+".")
+            pass
+
+    else:
+        print("\nImportação de catálogo cancelada.")
+    return subjects, turmas, prereqs, semoffers, credits, cat_info, prereq_report
+
+
+
+def set_config_as_default(storage, user_uid, file_name):
+    temp_dir = tempfile.TemporaryDirectory()
+    config_path_file = temp_dir.name+"/"+"default_config.xml"
+    full_file_path = user_uid+"/"+file_name
+    full_file_path = full_file_path.replace('%2F','/')
+    print(config_path_file)
+    print(full_file_path)
+    current_config = storage.child(full_file_path).download(config_path_file)
+    filename=current_config
+
+    if filename is not None or file_name is not 'not_set':
+        try:
+            f=open(config_path_file, 'r')
+            params = getting_params_config_from_file(config_path_file)
+            factors = getting_factors_config_from_file(config_path_file)
+            hard_passes = getting_hard_pass_from_file(config_path_file)
+            easy_passes = getting_easy_pass_from_file(config_path_file)
+            generic_config_info = getting_generic_info_from_file(config_path_file)
+            f.close()
+            temp_dir.cleanup()
+            importou_config = 1
+            print(params)
+        except SyntaxError:
+            print("\nProblema identificado ao importar. Verifique seu arquivo "+filename+".")
+            pass
+        except IOError:
+            print("\nProblema identificado ao importar. Verifique seu arquivo "+filename+".")
+            pass
+
+    else:
+        print("\nImportação de catálogo cancelada.")
+    return params, factors, hard_passes, easy_passes, generic_config_info
+
+
 def reset_all(subjects, turmas, prereqs, semoffers, credits, cat_info, prereq_report, params, factors, hard_passes, easy_passes, generic_config_info):
-    subjects = getting_subjects_config_from_file('app/imports/uploads/catalogo.xml')
-    turmas = getting_turmas_config_from_file('app/imports/uploads/catalogo.xml')
-    prereqs = getting_prereqs_config_from_file('app/imports/uploads/catalogo.xml')
-    semoffers = getting_semoffer_config_from_file('app/imports/uploads/catalogo.xml')
-    credits = getting_credits_config_from_file('app/imports/uploads/catalogo.xml')
-    cat_info = getting_catalog_info_from_file('app/imports/uploads/catalogo.xml')
-    prereq_report = getting_prereq_report_from_file('app/imports/uploads/catalogo.xml')
-    params = getting_params_config_from_file('app/imports/uploads/configs.xml')
-    factors = getting_factors_config_from_file('app/imports/uploads/configs.xml')
-    hard_passes = getting_hard_pass_from_file('app/imports/uploads/configs.xml')
-    easy_passes = getting_easy_pass_from_file('app/imports/uploads/configs.xml')
-    generic_config_info = getting_generic_info_from_file('app/imports/uploads/configs.xml')
+    
     return subjects, turmas, prereqs, semoffers, credits, cat_info, prereq_report, params, factors, hard_passes, easy_passes, generic_config_info
 
 

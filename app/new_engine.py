@@ -683,79 +683,64 @@ def get_report_sab_rec(sab_rec):
     return sab_rec_report
 
 
-def set_catalogo_as_default(storage, user_uid, file_name):
-    temp_dir = tempfile.TemporaryDirectory()
-    catalogo_path_file = temp_dir.name+"/"+"default_catalogo.xml"
-    full_file_path = user_uid+"/"+file_name
-    print(full_file_path)
-    current_catalogo = storage.child(full_file_path).download(catalogo_path_file)
-    filename=current_catalogo
-    if filename is not '' or filename is not 'not_set':
-        try:
-            f=open(catalogo_path_file)
-            subjects = getting_subjects_config_from_file(catalogo_path_file)
-            turmas = getting_turmas_config_from_file(catalogo_path_file)
-            prereqs = getting_prereqs_config_from_file(catalogo_path_file)
-            semoffers = getting_semoffer_config_from_file(catalogo_path_file)
-            credits = getting_credits_config_from_file(catalogo_path_file)
-            cat_info = getting_catalog_info_from_file(catalogo_path_file)
-            prereq_report = getting_prereq_report_from_file(catalogo_path_file)
-            ja_importou = 1
-        except SyntaxError:
-            print("\nProblema identificado ao importar. Verifique seu arquivo "+filename+".")
-            pass
-        except IOError:
-            print("\nProblema identificado ao importar. Verifique seu arquivo "+filename+".")
-            pass
+# def set_catalogo_as_default(storage, user_uid, file_name):
+#     temp_dir = tempfile.TemporaryDirectory()
+#     catalogo_path_file = temp_dir.name+"/"+"default_catalogo.xml"
+#     full_file_path = user_uid+"/"+file_name
+#     print(full_file_path)
+#     current_catalogo = storage.child(full_file_path).download(catalogo_path_file)
+#     filename=current_catalogo
+#     if filename is not '' or filename is not 'not_set':
+#         try:
+#             f=open(catalogo_path_file)
+#             subjects = getting_subjects_config_from_file(catalogo_path_file)
+#             turmas = getting_turmas_config_from_file(catalogo_path_file)
+#             prereqs = getting_prereqs_config_from_file(catalogo_path_file)
+#             semoffers = getting_semoffer_config_from_file(catalogo_path_file)
+#             credits = getting_credits_config_from_file(catalogo_path_file)
+#             cat_info = getting_catalog_info_from_file(catalogo_path_file)
+#             prereq_report = getting_prereq_report_from_file(catalogo_path_file)
+#             ja_importou = 1
+#         except SyntaxError:
+#             print("\nProblema identificado ao importar. Verifique seu arquivo "+filename+".")
+#             pass
+#         except IOError:
+#             print("\nProblema identificado ao importar. Verifique seu arquivo "+filename+".")
+#             pass
+#
+#     else:
+#         print("\nImportação de catálogo cancelada.")
+#     return subjects, turmas, prereqs, semoffers, credits, cat_info, prereq_report
 
-    else:
-        print("\nImportação de catálogo cancelada.")
-    return subjects, turmas, prereqs, semoffers, credits, cat_info, prereq_report
-
-def set_config_as_default(storage, user_uid, file_name):
-    temp_dir = tempfile.TemporaryDirectory()
-    config_path_file = temp_dir.name+"/"+"default_config.xml"
-    full_file_path = user_uid+"/"+file_name
-    full_file_path = full_file_path.replace('%2F','/')
-    print(full_file_path)
-    current_config = storage.child(full_file_path).download(config_path_file)
-    filename=current_config
-
-    if filename is not '' or filename is not 'not_set':
-        try:
-            f=open(config_path_file)
-            params = getting_params_config_from_file(config_path_file)
-            factors = getting_factors_config_from_file(config_path_file)
-            hard_passes = getting_hard_pass_from_file(config_path_file)
-            easy_passes = getting_easy_pass_from_file(config_path_file)
-            generic_config_info = getting_generic_info_from_file(config_path_file)
-            importou_config = 1
-            print(params)
-        except SyntaxError:
-            print("\nProblema identificado ao importar. Verifique seu arquivo "+filename+".")
-            pass
-        except IOError:
-            print("\nProblema identificado ao importar. Verifique seu arquivo "+filename+".")
-            pass
-
-    else:
-        print("\nImportação de catálogo cancelada.")
-    return params, factors, hard_passes, easy_passes, generic_config_info
-
-
-def import_configs(storage, user_uid, user_default_files):
-    temp_dir = tempfile.TemporaryDirectory()
-    catalogo_path_file = temp_dir.name+"/"+"default_catalogo.xml"
-    config_path_file = temp_dir.name+"/"+"default_configs.xml"
-    print(catalogo_path_file)
-    print(config_path_file)
-    current_catalogo = storage.child(user_uid+"/"+user_default_files[0]).download(catalogo_path_file)
-    filename1 = user_default_files[0]
-
-
-
-
-    return params, factors, hard_passes, easy_passes, generic_config_info, subjects, turmas, prereqs, semoffers, credits, cat_info, prereq_report
+# def set_config_as_default(storage, user_uid, file_name):
+#     temp_dir = tempfile.TemporaryDirectory()
+#     config_path_file = temp_dir.name+"/"+"default_config.xml"
+#     full_file_path = user_uid+"/"+file_name
+#     full_file_path = full_file_path.replace('%2F','/')
+#     print(full_file_path)
+#     current_config = storage.child(full_file_path).download(config_path_file)
+#     filename=current_config
+#
+#     if filename is not '' or filename is not 'not_set':
+#         try:
+#             f=open(config_path_file)
+#             params = getting_params_config_from_file(config_path_file)
+#             factors = getting_factors_config_from_file(config_path_file)
+#             hard_passes = getting_hard_pass_from_file(config_path_file)
+#             easy_passes = getting_easy_pass_from_file(config_path_file)
+#             generic_config_info = getting_generic_info_from_file(config_path_file)
+#             importou_config = 1
+#             print(params)
+#         except SyntaxError:
+#             print("\nProblema identificado ao importar. Verifique seu arquivo "+filename+".")
+#             pass
+#         except IOError:
+#             print("\nProblema identificado ao importar. Verifique seu arquivo "+filename+".")
+#             pass
+#
+#     else:
+#         print("\nImportação de catálogo cancelada.")
+#     return params, factors, hard_passes, easy_passes, generic_config_info
 
 
 def new_simulation(params, factors, hard_passes, easy_passes, generic_config_info, subjects, turmas, prereqs, semoffers, credits, cat_info, prereq_report, grade_sab_rec_factors, frequency_sab_rec_factors, easy_hard_factors):
