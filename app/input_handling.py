@@ -105,7 +105,7 @@ def set_config_as_default(storage, user_uid, file_name):
 
 
 def reset_all(subjects, turmas, prereqs, semoffers, credits, cat_info, prereq_report, params, factors, hard_passes, easy_passes, generic_config_info):
-    
+
     return subjects, turmas, prereqs, semoffers, credits, cat_info, prereq_report, params, factors, hard_passes, easy_passes, generic_config_info
 
 

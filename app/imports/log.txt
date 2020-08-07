@@ -22,14 +22,14 @@ Impacto positivo: + 0 á 2
 -------------------------------------------------------------------
 Sabotagem e recuperação de notas: 
 Qtde. de alunos: 9.0
-Qtde. alunos com impacto negativo: 4
+Qtde. alunos com impacto negativo: 2
 Fator de impacto negativo: - 0 à 2
-Qtde. alunos com impacto positivo: 5
+Qtde. alunos com impacto positivo: 7
 Fator de impacto positivo: + 0 à 2
 -------------------------------------------------------------------
 Sabotagem e recuperação de frequência: 
 Qtde. de alunos: 9.0
-Qtde. alunos com impacto negativo: 5
+Qtde. alunos com impacto negativo: 7
 Fator de impacto negativo: - 0 à 40
-Qtde. alunos com impacto positivo: 4
+Qtde. alunos com impacto positivo: 2
 Fator de impacto positivo: + 0 à 40

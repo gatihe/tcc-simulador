@@ -123,7 +123,7 @@ def exporting_to_tool(simulation_array, qtde_de_disciplinas_semestre_par,qtde_de
         c = 0
         while(c<len(subs_final_export)):
             if real_final_tool_export[l][c] == '--':
-                real_final_tool_export[l][c] = ''
+                real_final_tool_export[l][c] = 'undefined'
             else:
                 real_final_tool_export[l][c] = float(real_final_tool_export[l][c])
             c = c+1
@@ -1092,7 +1092,7 @@ def new_simulation(params, factors, hard_passes, easy_passes, generic_config_inf
     if os.path.exists("demofile.txt"):
         os.remove("demofile.txt")
     else:
-        f = open("app/imports/log.txt", "w")
+        f = open("/home/guiati9/tcc-simulador/app/imports/log.txt", "w")
         f.write('----------------------- LOG DA SIMULACAO --------------------------\n')
         f.write('- Quantidade de alunos simulados: '+str(len(students))+'.\n')
 
@@ -1148,61 +1148,61 @@ def new_simulation(params, factors, hard_passes, easy_passes, generic_config_inf
         f.close()
 ######################
         try:
-            f = open("app/exports/curso.csv")
-            os.remove("app/exports/curso.csv")
+            f = open("/home/guiati9/tcc-simulador/app/exports/curso.csv")
+            os.remove("/home/guiati9/tcc-simulador/app/exports/curso.csv")
         except IOError:
-            f = open("app/exports/curso.csv", "+w")
+            f = open("/home/guiati9/tcc-simulador/app/exports/curso.csv", "+w")
         finally:
             f.close()
-            simulation.to_csv(r'app/exports/curso.csv')
+            simulation.to_csv(r'/home/guiati9/tcc-simulador/app/exports/curso.csv')
 
 ######################
 
         std_info_export = pd.DataFrame (oteste,index=students, columns=['RA', 'ANOING', 'PINGR', 'DANOCAT', 'CURSO', 'ANO_INGRESSO', 'ANO_CATALOGO', 'CR', 'CP', 'CP_FUTURO', 'POSICAO_ALUNO_NA_TURMA', 'COEFICIENTE_RENDIMENTO_PADRAO', 'COEFICIENTE_RENDIMENTO_MEDIO', 'DESVIO_PADRAO_TURMA', 'TOTAL_ALUNOS_TURMA'])
         try:
-            f = open("app/exports/info_std.csv")
-            os.remove("app/exports/info_std.csv")
+            f = open("/home/guiati9/tcc-simulador/app/exports/info_std.csv")
+            os.remove("/home/guiati9/tcc-simulador/app/exports/info_std.csv")
         except IOError:
-            f = open("app/exports/info_std.csv", "+w")
+            f = open("/home/guiati9/tcc-simulador/app/exports/info_std.csv", "+w")
         finally:
             f.close()
-            std_info_export.to_csv(r"app/exports/info_std.csv")
+            std_info_export.to_csv(r"/home/guiati9/tcc-simulador/app/exports/info_std.csv")
 #####################
         std_records = pd.DataFrame (osrecords, columns=['RA', 'ANO', 'PERIODO', 'DISCIPLINA', 'NOTA', 'FREQUENCIA', 'SITUACAO', 'DESCRICAO_SITUACAO','CURRICULARIDADE', "CREDITO_DISCIPLINA", 'COMO_FOI_CURSADA'])
         try:
-            f = open("app/exports/historicos.csv")
-            os.remove("app/exports/historicos.csv")
+            f = open("/home/guiati9/tcc-simulador/app/exports/historicos.csv")
+            os.remove("/home/guiati9/tcc-simulador/app/exports/historicos.csv")
         except IOError:
-            f = open("app/exports/historicos.csv", "+w")
+            f = open("/home/guiati9/tcc-simulador/app/exports/historicos.csv", "+w")
         finally:
             f.close()
-            std_records.to_csv(r'app/exports/historicos.csv')
+            std_records.to_csv(r'/home/guiati9/tcc-simulador/app/exports/historicos.csv')
 ######################
         prereqs_report_export = pd.DataFrame(prereq_report, columns = ['TIPO_NIVEL_ATIVIDADE_MAE', "DISCIPLINA", "ANO_INICIO", "ANO_FIM", "NO_CADEIA_PRE_REQUISITO", "TIPO_PRE_REQUISITO", "DISCIPLINA_EXIGIDA", "TIPO_NIVEL_ATIVIDADE_EXIGIDA"])
         try:
-            f = open("app/exports/prerequisitos.csv")
-            os.remove("app/exports/prerequisitos.csv")
+            f = open("/home/guiati9/tcc-simulador/app/exports/prerequisitos.csv")
+            os.remove("/home/guiati9/tcc-simulador/app/exports/prerequisitos.csv")
         except IOError:
-            f = open("app/exports/prerequisitos.csv", "+w")
+            f = open("/home/guiati9/tcc-simulador/app/exports/prerequisitos.csv", "+w")
         finally:
             f.close()
-            prereqs_report_export.to_csv(r'app/exports/prerequisitos.csv')
+            prereqs_report_export.to_csv(r'/home/guiati9/tcc-simulador/app/exports/prerequisitos.csv')
 ######################
         export_to_tool = pd.DataFrame (real_final_tool_export,index=students, columns=subs_final_export)
         export_to_tool.index.name = 'RA'
         export_to_tool.insert(0,'CLASS',generic_config_info[0])
         try:
-            f = open("app/exports/export_visualizacao.csv")
-            os.remove("app/exports/export_visualizacao.csv")
+            f = open("/home/guiati9/tcc-simulador/app/exports/export_visualizacao.csv")
+            os.remove("/home/guiati9/tcc-simulador/app/exports/export_visualizacao.csv")
         except IOError:
-            f = open("app/exports/export_visualizacao.csv", "+w")
+            f = open("/home/guiati9/tcc-simulador/app/exports/export_visualizacao.csv", "+w")
         finally:
             f.close()
-            export_to_tool.to_csv(r'app/exports/export_visualizacao.csv', sep=';')
-        with open('app/exports/export_visualizacao.csv', 'r') as original: data = original.read()
-        with open('app/exports/export_visualizacao.csv', 'w') as modified: modified.write(";\n2\nCLASS\n" + data)
+            export_to_tool.to_csv(r'/home/guiati9/tcc-simulador/app/exports/export_visualizacao.csv', sep=';')
+        with open('/home/guiati9/tcc-simulador/app/exports/export_visualizacao.csv', 'r') as original: data = original.read()
+        with open('/home/guiati9/tcc-simulador/app/exports/export_visualizacao.csv', 'w') as modified: modified.write(";\n2\nCLASS\n" + data)
 ######################
 
-    return simulation, simulation_array, tempo_max_integralizacao, qtde_de_disciplinas_semestre_impar, qtde_de_disciplinas_semestre_par, subss, students_data, prereqs_report_export, std_records, std_info_export, f
+    return simulation, simulation_array, tempo_max_integralizacao, qtde_de_disciplinas_semestre_impar, qtde_de_disciplinas_semestre_par, subss, students_data, prereqs_report_export, std_records, std_info_export
 
 ####running ,,

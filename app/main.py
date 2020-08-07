@@ -21,7 +21,7 @@ config = {
     "messagingSenderId": "381390670054",
     "appId": "1:381390670054:web:a376551235a8d4f88b9327",
     "measurementId": "G-ZH6T8K1388",
-    "serviceAccount": "app/imports/configs/simulador-75b51-firebase-adminsdk-cv8yl-ee6529fce6.json"
+    "serviceAccount": "/home/guiati9/tcc-simulador/app/imports/configs/simulador-75b51-firebase-adminsdk-cv8yl-ee6529fce6.json"
     }
 firebase = pyrebase.initialize_app(config)
 auth = firebase.auth()
@@ -45,13 +45,18 @@ def check_session():
 
 @app.route("/")
 def home():
-    global simulation_lock
+    check_session()
     if "user_id" in session:
-            return render_template('index.html',array_test = [0,2,4,6], simulation_lock = simulation_lock, uid = session["user_id"])
-    return render_template('index.html',array_test = [0,2,4,6], simulation_lock = simulation_lock, uid = None)
+        simulation_Enabled = check_for_current_Catalog_and_Config(session)
+        return render_template('index.html',array_test = [0,2,4,6], uid = session["user_id"], simulation_Enabled = simulation_Enabled)
+    else:
+        simulation_Enabled = False
+        return render_template('index.html',array_test = [0,2,4,6], simulation_Enabled = simulation_Enabled)
+    return render_template('index.html',array_test = [0,2,4,6], uid = None)
 
 @app.route('/login/', methods=['POST', 'GET'])
 def login():
+    check_session()
     if request.method == "POST":
         session.permanent = True
         user = request.form['email']
@@ -80,13 +85,14 @@ def login():
             return "Please check your credentials"
         return redirect(url_for("user"))
     else:
-        return render_template("login.html",simulation_lock = simulation_lock)
+        simulation_Enabled = False
+        return render_template("login.html", simulation_Enabled = simulation_Enabled)
 
 @app.route('/user/')
 def user():
-
-    global simulation_lock
+    check_session()
     if "user_id" in session:
+        simulation_Enabled = check_for_current_Catalog_and_Config(session)
         return redirect(url_for("home"))
         #return ('<h1>'+user+'</h1>')
     else:
@@ -98,6 +104,7 @@ def user():
 def importacoes():
     check_session()
     if "user_id" in session:
+        simulation_Enabled = check_for_current_Catalog_and_Config(session)
         global simulation_lock
         user_uid = session["user_id"]
         #return ('<h1>'+user+'</h1>')
@@ -107,7 +114,7 @@ def importacoes():
                     timestamp = datetime.datetime.now().strftime("%d-%m_%I-%M-%S_%p")
                     try:
                         catalogo = request.files['catalogo']
-                        #catalogo.save('app/imports/uploads/catalogo.xml')
+                        #catalogo.save('/home/guiati9/tcc-simulador/app/imports/uploads/catalogo.xml')
                         storage.child(user_uid+"/"+timestamp+"_catalogo.xml").put(catalogo)
                         print(user_uid)
                         print('importou')
@@ -115,7 +122,7 @@ def importacoes():
                         pass
                     try:
                         configs = request.files['configs']
-                        #configs.save('app/imports/uploads/configs.xml')
+                        #configs.save('/home/guiati9/tcc-simulador/app/imports/uploads/configs.xml')
                         print(user_uid)
                         storage.child(user_uid+"/"+timestamp+"_configs.xml").put(configs)
                         print('importou')
@@ -134,14 +141,32 @@ def importacoes():
                     session["current_config"] = config_current
                     print(session["current_config"])
                     session["params"], session["factors"], session["hard_passes"], session["easy_passes"], session["generic_config_info"] = set_config_as_default(storage, user_uid, session["current_config"])
+                if "del_catalogo" in request.form:
+                    catalog_current = request.form["catalog_current"]
+                if "del_config" in request.form:
+                    config_current = request.form["config_current"]
+                    session["current_config"] = del_config(user_uid, config_current, session["current_config"])
                 available_catalog_imports, available_config_imports = list_imports(user_uid)
-                return render_template("importacoes.html", available_catalog_imports = available_catalog_imports, available_config_imports = available_config_imports, user_default_config = session["current_config"], user_default_catalog = session["current_catalogo"])
+                simulation_Enabled = check_for_current_Catalog_and_Config(session)
+                return render_template("importacoes.html", available_catalog_imports = available_catalog_imports, available_config_imports = available_config_imports, user_default_config = session["current_config"], user_default_catalog = session["current_catalogo"], simulation_Enabled = simulation_Enabled)
         available_catalog_imports, available_config_imports = list_imports(user_uid)
-        return render_template("importacoes.html", available_catalog_imports = available_catalog_imports, available_config_imports = available_config_imports, user_default_config = session["current_config"], user_default_catalog = session["current_catalogo"])
+        return render_template("importacoes.html", simulation_Enabled = simulation_Enabled, available_catalog_imports = available_catalog_imports, available_config_imports = available_config_imports, user_default_config = session["current_config"], user_default_catalog = session["current_catalogo"])
     else:
         return redirect(url_for("login"))
 
+def del_catalogo(user_id, catalogo, current_catalogo):
+    storage.delete(user_id+"/"+catalogo)
+    if catalogo == current_catalogo:
+        return 'not_set'
+    else:
+        return current_catalogo
 
+def del_config(user_id, config, current_config):
+    storage.delete(user_id+"/"+config)
+    if config == current_config:
+        return 'not_set'
+    else:
+        return current_config
 
 def list_imports(user_id):
     all_imported_catalogs = []
@@ -164,6 +189,7 @@ def list_imports(user_id):
 
 @app.route('/reset_configs/')
 def reset_configs():
+    check_session()
     user_uid = session["user_id"]
     session["subjects"], session["turmas"], session["prereqs"], session["semoffers"], session["credits"], session["cat_info"], session["prereq_report"] = set_catalogo_as_default(storage, user_uid, session["current_catalogo"])
     session["params"], session["factors"], session["hard_passes"], session["easy_passes"], session["generic_config_info"] = set_config_as_default(storage, user_uid, session["current_config"])
@@ -173,9 +199,9 @@ def reset_configs():
 
 @app.route('/disciplinas/', methods=['GET','POST'])
 def disciplinas():
-    global simulation_lock
+    check_session()
     if "user_id" in session:
-        #return render_template("disciplinas.html", params = session["subjects"], simulation_lock = simulation_lock)
+        simulation_Enabled = check_for_current_Catalog_and_Config(session)
         if request.method == 'POST':
             if "new_subject" in request.form:
                 new_subj = request.form.get('subject_to_be_Added')
@@ -183,59 +209,84 @@ def disciplinas():
                 ideal_sem = request.form.get('ideal_sem')
                 qty_credits = request.form.get('qty_credits')
                 set_new_subject(session["subjects"], session["turmas"], session["semoffers"], session["credits"], new_subj, qty_turmas, ideal_sem, qty_credits)
-                return render_template("disciplinas.html", simulation_lock = simulation_lock, subjects = session["subjects"], user_default_files = user_default_files)
+                return render_template("disciplinas.html",  simulation_Enabled = simulation_Enabled, subjects = session["subjects"])
             if "remove_subjects" in request.form:
                 subjects_to_remove = request.form.getlist('subj_rmv')
                 for subject_removed in subjects_to_remove:
                     session["subjects"], session["turmas"], session["semoffers"], session["credits"] = del_subject(session["subjects"], session["turmas"], session["semoffers"], session["credits"], subject_removed)
-                return render_template("disciplinas.html", simulation_lock = simulation_lock, subjects = session["subjects"], user_default_files = user_default_files)
+                return render_template("disciplinas.html",  simulation_Enabled = simulation_Enabled, subjects = session["subjects"])
             if "set_net_classes_no" in request.form:
                 subject_to_change_classes_no = request.form.get('subject_to_change_Classes_No')
                 new_classes_no = request.form.get('new_classes_no')
                 session["subjects"], session["turmas"] = edit_turmas(session["subjects"], session["turmas"], subject_to_change_classes_no, new_classes_no)
-                return render_template("disciplinas.html", simulation_lock = simulation_lock, subjects = session["subjects"], user_default_catalog = session["user_default_catalog"], user_default_config = session["user_default_config"])
+                return render_template("disciplinas.html",  simulation_Enabled = simulation_Enabled, subjects = session["subjects"], user_default_catalog = session["user_default_catalog"], user_default_config = session["user_default_config"])
         else:
-            return render_template("disciplinas.html", simulation_lock = simulation_lock, subjects = session["subjects"], user_default_catalog = session["user_default_catalog"], user_default_config = session["user_default_config"])
+            return render_template("disciplinas.html",  simulation_Enabled = simulation_Enabled, subjects = session["subjects"], user_default_catalog = session["user_default_catalog"], user_default_config = session["user_default_config"])
     else:
         return redirect(url_for("login"))
 
+def check_for_current_Catalog_and_Config(session):
+    simulation_Enabled = False
+    handle = ""
+    available_catalog_imports = []
+    available_config_imports = []
+    if "user_id" in session:
+        print("ok")
+        if "current_catalogo" in session and "current_config" in session:
+            print("ok2")
+            available_catalog_imports, available_config_imports = list_imports(session["user_id"])
+            print(available_catalog_imports)
+            print(session["current_catalogo"])
+            print(available_config_imports)
+            print(session["current_config"])
+            if session["current_catalogo"] in available_catalog_imports and session["current_config"] in available_config_imports:
+                print("ok3")
+                #check if used params are populated
+                if "params" in session and "factors" in session and "hard_passes" in session and "easy_passes" in session and "generic_config_info" in session and "subjects" in session and "turmas" in session and "prereqs" in session and "semoffers"  in session and "credits" in session and "cat_info" in session and "prereq_report" in session and "grade_sab_rec_factors" in session and "frequency_sab_rec_factors" in session and "easy_hard_factors" in session:
+                    simulation_Enabled = True
+    return simulation_Enabled
+
 @app.route('/pre_requisitos/', methods=['GET','POST'])
 def pre_requisitos():
+    check_session()
     global simulation_lock
     selected_subjects = []
     allprereqs = []
     teste = []
     prereqs_dict = {}
     if "user_id" in session:
+        simulation_Enabled = check_for_current_Catalog_and_Config(session)
         if request.method == 'POST':
             if "list_prereqs" in request.form:
                 selected_subjects = request.form.getlist('selected_subjects')
                 for selected_subject in selected_subjects:
                     teste.append(list_prereqs(session["prereqs"], session["subjects"], selected_subject))
                 prereqs_dict = dict(zip(selected_subjects, teste))
-                return render_template("pre_requisitos.html", selected_subjects = selected_subjects, simulation_lock = simulation_lock, teste = teste, subjects = session["subjects"], prereqs_dict = prereqs_dict, user_default_catalog = session["user_default_catalog"], user_default_config = session["user_default_config"])
+                return render_template("pre_requisitos.html", simulation_Enabled = simulation_Enabled, selected_subjects = selected_subjects,  teste = teste, subjects = session["subjects"], prereqs_dict = prereqs_dict, user_default_catalog = session["user_default_catalog"], user_default_config = session["user_default_config"])
             if "add_subject" in request.form:
                 subject_to_add_as_prereq = request.form.get('subj')
                 subject_to_have_prereq_added = request.form.get('pre_req_will_be_Added')
                 add_prereqs(session["subjects"], session["prereqs"], subject_to_have_prereq_added, subject_to_add_as_prereq)
-                return render_template("pre_requisitos.html", selected_subjects = selected_subjects, simulation_lock = simulation_lock, teste = teste, subjects = session["subjects"], prereqs_dict = prereqs_dict, user_default_catalog = session["user_default_catalog"], user_default_config = session["user_default_config"])
+                return render_template("pre_requisitos.html", simulation_Enabled = simulation_Enabled, selected_subjects = selected_subjects,  teste = teste, subjects = session["subjects"], prereqs_dict = prereqs_dict, user_default_catalog = session["user_default_catalog"], user_default_config = session["user_default_config"])
             if "clear_prereqs" in request.form:
                 subject_to_remove_prereqs = request.form.get('pre_req_will_be_Added')
                 clear_prereqs(session["subjects"], session["prereqs"], subject_to_remove_prereqs)
-                return render_template("pre_requisitos.html", selected_subjects = selected_subjects, simulation_lock = simulation_lock, teste = teste, subjects = session["subjects"], prereqs_dict = prereqs_dict, user_default_catalog = session["user_default_catalog"], user_default_config = session["user_default_config"])
+                return render_template("pre_requisitos.html", simulation_Enabled = simulation_Enabled, selected_subjects = selected_subjects,  teste = teste, subjects = session["subjects"], prereqs_dict = prereqs_dict, user_default_catalog = session["user_default_catalog"], user_default_config = session["user_default_config"])
         else:
-            return render_template("pre_requisitos.html", subjects = session["subjects"], simulation_lock = simulation_lock, teste = teste, user_default_catalog = session["user_default_catalog"], user_default_config = session["user_default_config"])
+            return render_template("pre_requisitos.html", simulation_Enabled = simulation_Enabled, subjects = session["subjects"],  teste = teste, user_default_catalog = session["user_default_catalog"], user_default_config = session["user_default_config"])
     else:
         return redirect(url_for("login"))
 
 @app.route('/parametros/', methods=['GET','POST'])
 def parametros():
+    check_session()
     global simulation_lock
-    param_names = listar_parametros(session["params"])
-    single_param_dict = {}
-    params_dict = {}
-    selected_params = []
     if "user_id" in session:
+        simulation_Enabled = check_for_current_Catalog_and_Config(session)
+        param_names = listar_parametros(session["params"])
+        single_param_dict = {}
+        params_dict = {}
+        selected_params = []
         if request.method == 'POST':
             if "get_params_info" in request.form:
                 selected_params = request.form.getlist('selected_params')
@@ -279,7 +330,7 @@ def parametros():
                     removed_param_name = request.form.get('param_to_edit')
                     session["params"] = del_parameter(session["params"], removed_param_name)
                     param_names = listar_parametros(session["params"])
-                    return render_template("parametros.html", param_names = param_names, simulation_lock = simulation_lock, user_default_files = user_default_files)
+                    return render_template("parametros.html", simulation_Enabled = simulation_Enabled, param_names = param_names,  user_default_files = user_default_files)
                 except ValueError:
                     pass
             if "new_param" in request.form:
@@ -296,15 +347,17 @@ def parametros():
                     param_names = listar_parametros(session["params"])
                 except ValueError:
                     pass
-            return render_template("parametros.html", param_names = param_names, simulation_lock = simulation_lock, params_dict = params_dict, selected_params = selected_params, selected_param = selected_param, user_default_catalog = session["user_default_catalog"], user_default_config = session["user_default_config"])
+            return render_template("parametros.html", simulation_Enabled = simulation_Enabled, param_names = param_names,  params_dict = params_dict, selected_params = selected_params, selected_param = selected_param, user_default_catalog = session["user_default_catalog"], user_default_config = session["user_default_config"])
         else:
-            return render_template("parametros.html", param_names = param_names, simulation_lock = simulation_lock, params_dict = params_dict, user_default_catalog = session["user_default_catalog"], user_default_config = session["user_default_config"])
+            return render_template("parametros.html", simulation_Enabled = simulation_Enabled, param_names = param_names,  params_dict = params_dict, user_default_catalog = session["user_default_catalog"], user_default_config = session["user_default_config"])
     else:
         return redirect(url_for("login"))
 
 @app.route('/configuracoes_adicionais/', methods=['GET','POST'])
 def configuracoes_adicionais():
+    check_session()
     if "user_id" in session:
+        simulation_Enabled = check_for_current_Catalog_and_Config(session)
         if request.method == 'POST':
             if "set_easy_hard_passes" in request.form:
                 min_value = request.form.get('easy_factor')
@@ -340,7 +393,7 @@ def configuracoes_adicionais():
                 session["easy_hard_factors"].append(float(negative_impact))
                 session["easy_hard_factors"].append(float(positive_impact))
             return render_template("configuracoes_adicionais.html")
-        return render_template("configuracoes_adicionais.html", user_default_catalog = session["user_default_catalog"], user_default_config = session["user_default_config"])
+        return render_template("configuracoes_adicionais.html", simulation_Enabled = simulation_Enabled, user_default_catalog = session["user_default_catalog"], user_default_config = session["user_default_config"])
     else:
         return redirect(url_for("login"))
 
@@ -348,6 +401,8 @@ def configuracoes_adicionais():
 
 @app.route("/simulacao/", methods=['POST', 'GET'])
 def simulacao():
+    simulation_Enabled = check_for_current_Catalog_and_Config(session)
+    check_session()
     if "user_id" in session:
     #     if request.method == "POST":
     #a
@@ -363,17 +418,18 @@ def simulacao():
     #             return "Please check your credentials"
     #         return redirect(url_for("user"))
     #     global simulation_lock
-        simulation, simulation_array, tempo_max_integralizacao, qtde_de_disciplinas_semestre_impar, qtde_de_disciplinas_semestre_par, subss, students_data, prereqs_report_export, std_records, std_info_export, file = new_simulation(session["params"], session["factors"], session["hard_passes"], session["easy_passes"], session["generic_config_info"], session["subjects"], session["turmas"], session["prereqs"], session["semoffers"], session["credits"], session["cat_info"], session["prereq_report"], session["grade_sab_rec_factors"], session["frequency_sab_rec_factors"], session["easy_hard_factors"])
-        #with open("app/imports/log.txt", "r") as f:
+        simulation, simulation_array, tempo_max_integralizacao, qtde_de_disciplinas_semestre_impar, qtde_de_disciplinas_semestre_par, subss, students_data, prereqs_report_export, std_records, std_info_export = new_simulation(session["params"], session["factors"], session["hard_passes"], session["easy_passes"], session["generic_config_info"], session["subjects"], session["turmas"], session["prereqs"], session["semoffers"], session["credits"], session["cat_info"], session["prereq_report"], session["grade_sab_rec_factors"], session["frequency_sab_rec_factors"], session["easy_hard_factors"])
+        #with open("/home/guiati9/tcc-simulador/app/imports/log.txt", "r") as f:
             #content = f.read()
-        a_file = open("app/imports/log.txt", "r")
+        a_file = open("/home/guiati9/tcc-simulador/app/imports/log.txt", "r")
         lines = a_file.readlines()
-        return render_template('simulacao.html', simulation_table=[simulation.to_html(classes='table table-striped table-sm', header="false",justify="left", border="0", index=False)], prereqs_table=[prereqs_report_export.to_html(classes='table table-striped table-sm', header="false",justify="left", border="0", index=False)],std_records_table=[std_records.to_html(classes='table table-striped table-sm', header="false",justify="left", border="0", index=False)],std_info_table=[std_info_export.to_html(classes='table table-striped table-sm', header="false",justify="left", border="0", index=False)],params = session["subjects"], simulation_lock = simulation_lock, lines = lines, user_default_catalog = session["user_default_catalog"], user_default_config = session["user_default_config"])
+        return render_template('simulacao.html', simulation_Enabled = simulation_Enabled, simulation_table=[simulation.to_html(classes='table table-striped table-sm', header="false",justify="left", border="0", index=False)], prereqs_table=[prereqs_report_export.to_html(classes='table table-striped table-sm', header="false",justify="left", border="0", index=False)],std_records_table=[std_records.to_html(classes='table table-striped table-sm', header="false",justify="left", border="0", index=False)],std_info_table=[std_info_export.to_html(classes='table table-striped table-sm', header="false",justify="left", border="0", index=False)],params = session["subjects"],  lines = lines, user_default_catalog = session["user_default_catalog"], user_default_config = session["user_default_config"])
     else:
         return redirect(url_for("login"))
 
 @app.route("/logout/")
 def logout():
+    check_session()
     global simulation_lock
     auth.current_user = None
     if "user_id" in session:
@@ -385,7 +441,7 @@ def logout():
 
 @app.route('/download_curso/')
 def download_curso():
-    with open("app/exports/curso.csv") as fp:
+    with open("/home/guiati9/tcc-simulador/app/exports/curso.csv") as fp:
         csv = fp.read()
     return Response(
         csv,
@@ -395,7 +451,7 @@ def download_curso():
 
 @app.route('/download_info_std/')
 def download_info_std():
-    with open("app/exports/info_std.csv") as fp:
+    with open("/home/guiati9/tcc-simulador/app/exports/info_std.csv") as fp:
         csv = fp.read()
     return Response(
         csv,
@@ -405,7 +461,7 @@ def download_info_std():
 
 @app.route('/download_historicos/')
 def download_historicos():
-    with open("app/exports/historicos.csv") as fp:
+    with open("/home/guiati9/tcc-simulador/app/exports/historicos.csv") as fp:
         csv = fp.read()
     return Response(
         csv,
@@ -415,7 +471,7 @@ def download_historicos():
 
 @app.route('/download_prerequisitos/')
 def download_prerequisitos():
-    with open("app/exports/prerequisitos.csv") as fp:
+    with open("/home/guiati9/tcc-simulador/app/exports/prerequisitos.csv") as fp:
         csv = fp.read()
     return Response(
         csv,
@@ -425,7 +481,7 @@ def download_prerequisitos():
 
 @app.route('/download_visualizacao/')
 def projeto_rafael():
-    with open("app/exports/export_visualizacao.csv") as fp:
+    with open("/home/guiati9/tcc-simulador/app/exports/export_visualizacao.csv") as fp:
         csv = fp.read()
     return Response(
         csv,
@@ -434,67 +490,6 @@ def projeto_rafael():
                  "attachment; filename=visualizacao.csv"})
 
 
-# def delete_catalogo(catalogo):
-#     all_files = storage.list_files()
-#     for files in all_files:
-#         full_file_path = storage.child(files.name).get_url(None)
-#         print(full_file_path)
-#         if session["user_id"] in full_file_path:
-#             if catalogo in full_file_path:
-#                 storage.delete(session["user_id"]+"/"+catalogo)
-#                 if catalogo == session["user_default_catalog"]:
-#                     session["user_default_catalog"] = 'not_set'
-#     return
-#
-# def delete_config(config):
-#     all_files = storage.list_files()
-#     for files in all_files:
-#         full_file_path = storage.child(files.name).get_url(None)
-#         print(full_file_path)
-#         if session["user_id"] in full_file_path:
-#             if config in full_file_path:
-#                 storage.delete(session["user_id"]+"/"+config)
-#                 if config == session["user_default_config"]:
-#                     session["user_default_config"] = 'not_set'
-#     return
-
-# def list_imports(user_uid, user_default_files):
-#     all_files = storage.list_files()
-#     available_config_imports = []
-#     available_catalogo_imports = []
-#     for file in all_files:
-#         full_file_path = storage.child(file.name).get_url(None)
-#         print(full_file_path)
-#         directory_path = full_file_path[74:-10]
-#         # 74 + 3 (%2F)
-#         if user_uid in directory_path:
-#             file_name = full_file_path[77+len(user_uid):-10]
-#             print(file_name)
-#             if "config" in file_name:
-#                 if file_name not in available_config_imports:
-#                     available_config_imports.append(file_name)
-#                     if file_name in user_default_files:
-#                         default_config_path = user_uid+"/"+file_name
-#                         default_config_path = default_config_path.replace('%2F','/')
-#                         params, factors, hard_passes, easy_passes, generic_config_info = set_config_as_default(storage, user_uid, file_name)
-#             if "catalogo" in file_name:
-#                 if file_name not in available_catalogo_imports:
-#                     print(full_file_path)
-#                     print(file_name)
-#                     available_catalogo_imports.append(file_name)
-#                     if file_name in user_default_files:
-#                         subjects, turmas, prereqs, semoffers, credits, cat_info, prereq_report = set_catalogo_as_default(storage, user_uid, file_name)
-#
-#     return available_config_imports, available_catalogo_imports
-# @app.route("/admin/")
-# def admin():
-#     if a:
-#         return 'adm'
-#     return redirect(url_for("user", name ="Admin!!!"))
-#
-# @app.route('/<name>/')
-# def user(name):
-#     return ('Hello '+name)
 
 if __name__ == '__main__':
     app.run(debug=True)
