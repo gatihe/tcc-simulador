@@ -16,10 +16,9 @@
                      <a class="dropdown-item" href="/download_info_std">Informação dos alunos</a>
                      <a class="dropdown-item" href="/download_historicos">Históricos</a>
                      <a class="dropdown-item" href="/download_prerequisitos">Pré-requisitos</a>
+                     <a class="dropdown-item" href="/download_visualizacao">Arquivo de visualização</a>
                      <div class="dropdown-divider"></div>
-                     <a class="dropdown-item" href="#">Todos</a>
-                     <div class="dropdown-divider"></div>
-                     <a class="dropdown-item" href="/download_visualizacao">Visualizacao</a>
+                     <a class="dropdown-item" href="/visualizacao" target="_blank" rel="noopener noreferrer">Visualizar</a>
                   </div>
                </div>
             </div>
@@ -97,13 +96,28 @@
                   </div>
                </div>
             </div>
+            <div class="card" style="margin-bottom:30px">
+               <div class="card-header" id="headingFour">
+                  <h5 class="mb-0">
+                     <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
+                     Detalhes da simulação
+                     </button>
+                  </h5>
+               </div>
+               <div id="collapseFive" class="collapse" aria-labelledby="headingFive" data-parent="#accordion">
+                  <div class="card-body">
+                       <pre><code>
+              {% for line in lines %}
+              {{ line }}
+              {% endfor %}
+              </code></pre>
+                  </div>
+               </div>
+            </div>
          </div>
-         <pre><code>
-{% for line in lines %}
-{{ line }}
-{% endfor %}
-</code></pre>
+
       </main>
    </div>
+
 </div>
 {% endblock %}

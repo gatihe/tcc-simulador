@@ -1,0 +1,147 @@
+{% extends 'base.html' %}
+{% block title %} Home Page{% endblock %}
+{% block content %}
+<div class="container">
+  {% if simulation_Enabled == False %}
+  <div class="row row-no-gutters" style="min-height:200px; margin-top: 50px; border-bottom: solid 1px #d2d2d2; padding-bottom: 20px;">
+    <div class="col-sm-4">
+
+    </div>
+  <div class="col-sm-4">
+
+    <p style="text-align: center; margin-top: 5px; font-style: italic; float:right">Não foi encontrado nenhum catálogo ou arquivo de configurações adicionais definidos como padrão, portanto os valores para os fatores de impacto a seguir são os padrões do GradeGen.</p>
+    <div style="margin-top:20px" class="row">
+   <a style="margin-top:30px; width:300px; margin-left: auto; margin-right: auto;" href="/importacoes" class="btn btn-primary my-2 my-sm-0 btn-block">Definir arquivos padrão</a>
+    </div>
+  </div>
+  <div class="col-sm-4">
+
+  </div>
+
+  </div>
+  {% endif %}
+
+  <div class="row row-no-gutters" style="min-height:200px; margin-top: 50px; border-bottom: solid 1px #d2d2d2; padding-bottom: 20px;">
+  <div class="col-sm-4"><h4 style="">Sabotagem e recuperação</br>de notas</h4>
+  <p style="text-align: justify; margin-top: 20px; font-style: italic;"></p>
+  </div>
+  <div class="col-sm-8">
+    <div class="row">
+      <div style="text-align:center;" class="col-4">
+        {{ sb_g|safe }}
+      </div>
+      <div style="text-align:center;" class="col-4">
+        {{ rc_g|safe }}
+      </div>
+      <div style="text-align:center;" class="col-4">
+        {{ pct_g|safe }}
+      </div>
+      </div>
+  </div>
+  </div>
+
+
+  <div class="row row-no-gutters" style="min-height:200px; margin-top: 50px; border-bottom: solid 1px #d2d2d2; padding-bottom: 20px;">
+  <div class="col-sm-4"><h4 style="">Sabotagem e recuperação</br>de frequência</h4>
+  <p style="text-align: justify; margin-top: 20px; font-style: italic;"></p>
+  </div>
+  <div class="col-sm-8">
+
+    <div class="row">
+      <div style="text-align:center;" class="col-4">
+        {{ sb_f|safe }}
+      </div>
+      <div style="text-align:center;" class="col-4">
+        {{ rc_f|safe }}
+      </div>
+      <div style="text-align:center;" class="col-4">
+        {{ pct_f|safe }}
+      </div>
+      </div>
+
+  </div>
+  </div>
+
+
+  <div class="row row-no-gutters" style="min-height:200px; margin-top: 50px; border-bottom: solid 1px #d2d2d2; padding-bottom: 20px;">
+  <div class="col-sm-4"><h4 style="">Disciplinas fáceis e difíceis</h4>
+  <p style="text-align: justify; margin-top: 20px; font-style: italic;"></p>
+  </div>
+  <div class="col-sm-8">
+
+    <div class="row">
+      <div class="col">
+
+      </div>
+      <div style="text-align:center;" class="col-4">
+        {{ hard_impact|safe }}
+      </div>
+      <div style="text-align:center;" class="col-4">
+        {{ easy_impact|safe }}
+      </div>
+      <div style="text-align:center;" class="col">
+      </div>
+      </div>
+
+  </div>
+  </div>
+
+
+
+
+  <div class="row row-no-gutters" style="min-height:200px; margin-top: 50px; border-bottom: solid 1px #d2d2d2; padding-bottom: 20px;">
+  <div class="col-sm-4"><h4 style="">Alteração abrupta na nota</h4>
+  <p style="text-align: justify; margin-top: 20px; font-style: italic;"></p>
+  </div>
+  <div class="col-sm-8">
+
+    <div class="row">
+      <div class="col">
+
+      </div>
+      <div style="text-align:center;" class="col-4">
+        {{ abrupt_negative|safe }}
+      </div>
+      <div style="text-align:center;" class="col-4">
+        {{ abrupt_positive|safe }}
+      </div>
+      <div style="text-align:center;" class="col">
+      </div>
+      </div>
+
+  </div>
+  </div>
+  <div class="row row-no-gutters" style="min-height:200px; margin-top: 50px; border-bottom: solid 1px #d2d2d2; padding-bottom: 20px;">
+    <div class="col-sm-4">
+
+    </div>
+  <div class="col-sm-4">
+    {% if simulation_Enabled == False %}
+    <p style="text-align: center; margin-top: 5px; font-style: italic; float:right">Defina um catálogo e as configurações adicionais para poder alterar estes fatores</p>
+    <div style="margin-top:20px" class="row">
+   <a style="margin-top:30px; width:300px; margin-left: auto; margin-right: auto;" href="/importacoes" class="btn btn-primary my-2 my-sm-0 btn-block">Definir arquivos padrão</a>
+    </div>
+    {% else %}
+    <p style="text-align: center; margin-top: 5px; font-style: italic; float:right">Configure os fatores que atuam sobre as simulações realizadas</p>
+    <div style="margin-top:20px" class="row">
+   <a style="margin-top:30px; width:300px; margin-left: auto; margin-right: auto;" href="/configuracoes_adicionais" class="btn btn-primary my-2 my-sm-0 btn-block">Configurações</a>
+    </div>
+    {% endif %}
+  </div>
+  <div class="col-sm-4">
+
+  </div>
+
+  </div>
+
+
+
+
+
+
+
+
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+        <meta http-equiv="cache-control" content="no-cache, must-revalidate, post-check=0, pre-check=0" />
+        <meta http-equiv="cache-control" content="max-age=0" />
+        <meta http-equiv="expires" content="-1" />
+        <meta http-equiv="expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
+        <meta http-equiv="pragma" content="no-cache" />
+
+        <title>Visualização</title>
+        <script src="https://d3js.org/d3.v6.min.js"></script>
+        <script type = "text/javascript" src = "{{ url_for('static', filename='js/fbfunctions.js') }}"></script>
+
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bootstrap-4.3.1.min.css') }}">
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bootstrap-colorpicker-3.1.1.min.css') }}">
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='fontawesome/css/all.css') }}">
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/filters.css') }}">
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/graphic.css') }}">
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/sidebar.css') }}">
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/main.css') }}">
+        <script type="text/javascript">
+        /*d3.text({{ vizz_file }}, function(data) {
+          console.log(data[0]);
+        });*/
+
+
+        /*d3.text("https://gerardnico.com/datafile/basic_d3.csv", 'text/csv', function(rawData) {
+            console.log(rawData)
+            const dsv = d3.dsvFormat(getFirstLine(rawData));
+            rawData                = removeFirstLine(rawData);
+            numberColumnsToAppend     = getFirstLine(rawData);
+            rawData                = removeFirstLine(rawData);
+            classColumn               = getFirstLine(rawData);
+            classColumn = classColumn.replace(/(\r\n|\n|\r)/gm, "");
+            rawData                = removeFirstLine(rawData);
+            readerData = dsv.parse(rawData);
+            console.log(rawData);
+            filterClasses = getFilterClasses(readerData, classColumn);xxx
+            displayFilterClasses(filterClasses);
+            currentData = rawData;
+        });*/
+        //THIS WORKS \/
+            var test = d3.text("{{vizz_file}}").then(function(rawData) {
+                console.log(rawData)
+                const dsv = d3.dsvFormat(getFirstLine(rawData));
+                rawData                = removeFirstLine(rawData);
+                numberColumnsToAppend     = getFirstLine(rawData);
+                rawData                = removeFirstLine(rawData);
+                classColumn               = getFirstLine(rawData);
+                classColumn = classColumn.replace(/(\r\n|\n|\r)/gm, "");
+                rawData                = removeFirstLine(rawData);
+                readerData = dsv.parse(rawData);
+                console.log(rawData);
+                filterClasses = getFilterClasses(readerData, classColumn);
+                displayFilterClasses(filterClasses);
+                currentData = rawData;
+            });
+            //console.log(teste)
+            //d3.text("{{ url_for('static', filename='visualizacao.csv') }}", function(data){
+              //await console.log(data);
+            //});
+            //d3.text(teste, function(rawData) {
+              //  const dsv = d3.dsvFormat(getFirstLine(rawData));
+                //rawData                = removeFirstLine(rawData);
+                //numberColumnsToAppend     = getFirstLine(rawData);
+                //rawData                = removeFirstLine(rawData);
+                //classColumn               = getFirstLine(rawData);
+                //classColumn = classColumn.replace(/(\r\n|\n|\r)/gm, "");
+                //rawData                = removeFirstLine(rawData);
+                //readerData = dsv.parse(rawData);
+                //console.console.log(rawData);
+                //filterClasses = getFilterClasses(readerData, classColumn);
+                //displayFilterClasses(filterClasses);
+                //currentData = rawData;
+            //});
+        </script>
+    </head>
+    <body>
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+         <a class="navbar-brand" href="#">GradeGen</a><a class="navbar-brand" href="/"></a>
+         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+         <span class="navbar-toggler-icon"></span>
+         </button>
+         <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+               <li class="nav-item">
+                  <a class="nav-link" href="/">Home</a>
+               </li>
+               <li class="nav-item">
+                  <a class="nav-link" href="/importacoes">Importações</a>
+               </li>
+               {% if simulation_Enabled == False %}
+               <li class="nav-item dropdown disabled">
+                  <a class="nav-link dropdown-toggle disabled" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  Configurações
+                  </a>
+                  <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                     <a class="dropdown-item" href="/disciplinas">Disciplinas</a>
+                     <a class="dropdown-item" href="/pre_requisitos">Pré-requisitos</a>
+                     <a class="dropdown-item" href="/parametros">Parâmetros</a>
+                     <a class="dropdown-item" href="/configuracoes_adicionais">Configurações adicionais</a>
+                     <div class="dropdown-divider"></div>
+                     <a class="dropdown-item" href="/reset_configs">Resetar configurações</a>
+                  </div>
+               </li>
+               {% else %}
+               <li class="nav-item dropdown disabled">
+                  <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  Configurações
+                  </a>
+                  <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                     <a class="dropdown-item" href="/disciplinas">Disciplinas</a>
+                     <a class="dropdown-item" href="/pre_requisitos">Pré-requisitos</a>
+                     <a class="dropdown-item" href="/parametros">Parâmetros</a>
+                     <a class="dropdown-item" href="/configuracoes_adicionais">Configurações adicionais</a>
+                     <div class="dropdown-divider"></div>
+                     <a class="dropdown-item" href="/reset_configs">Resetar configurações</a>
+                  </div>
+               </li>
+               {% endif %}
+               {% if simulation_Enabled == False %}
+               <li class="nav-item">
+                  <a class="nav-link disabled" href="/simulacao" tabindex="-1" aria-disabled="true">Simular</a>
+               </li>
+               {% else %}
+               <li class="nav-item">
+                  <a class="nav-link" href="/simulacao" tabindex="-1" aria-disabled="true">Simular</a>
+               </li>
+               {% endif %}
+            </ul>
+            {% if "user_id" in session: %}
+            <a href="/logout"><button class="btn btn-danger my-2 my-sm-0">Sair</button></a>
+            {% elif "user" not in session: %}
+            <form class="form-inline my-2 my-lg-0" action="/login">
+               <a href="/login"><button class="btn btn-success my-2 my-sm-0">Entrar</button></a>
+            </form>
+            {% endif %}
+         </div>
+      </nav>
+        <div id="sidebarContainer" class="container-fluid fixed-top pr-0" style="margin-top:60px;">
+            <div id="sidebar" class="row collapse show no-gutters d-flex h-100 position-relative collapse-sidebar">
+              <div id="other" class="no-transition sidebar-collapse col-3 px-0 w-sidebar navbar-collapse d-none d-md-flex">
+                  <div class="row no-transition pt-5">
+                      <div class="w-100 mb-3 text-center">
+                          <p>Clique sobre a tela principal para visualizar</p>
+                      </div>
+                      <div class="w-100 card-header toggable collapse-filter" data-toggle="collapse" data-target="#collapseLegendColors" aria-expanded="true" aria-controls="collapseLegendColors">
+                          <button class="btn btn-link" >
+                              <i class="fa" aria-hidden="false"></i> Legenda
+                              <i class="fas fa-question-circle icon-question"  data-toggle="tooltip" title="Personalize os principais valores e as cores da legenda do gráfico"></i>
+                          </button>
+                      </div>
+                      <div class="collapse show pl-2 pr-2 mt-3" id="collapseLegendColors">
+                          <div class="form-group row ml-1">
+                              <label class="col-sm-6 col-form-label" for="legendBadValue">Menor nota</label>
+                              <div class="col-sm-6 input-group">
+                                  <input name="legendBadValue" id="legendBadValue" type="text" class="form-control input-lg text-center" value="0"/>
+                                  <div id="legendBad">
+                                      <input class="legend-color" id="legendBadColor" type="text" value="#EB1A1A"/>
+                                      <span class="input-group-append legend-color-span">
+                                          <span class="input-group-text colorpicker-input-addon"><i></i></span>
+                                      </span>
+                                  </div>
+                              </div>
+                          </div>
+                          <div class="form-group row ml-1">
+                              <label class="col-sm-6 col-form-label" for="legendNeutralValue">Média</label>
+                              <div class="col-sm-6 input-group">
+                                  <input name="legendNeutralValue" id="legendNeutralValue" type="text" class="form-control input-lg text-center" value="6"/>
+                                  <div id="legendNeutral">
+                                      <input class="legend-color" id="legendNeutralColor" type="text" value="#FFFFFF"/>
+                                      <span class="input-group-append legend-color-span">
+                                          <span class="input-group-text colorpicker-input-addon"><i></i></span>
+                                      </span>
+                                  </div>
+                              </div>
+                          </div>
+                          <div class="form-group row ml-1">
+                              <label class="col-sm-6 col-form-label" for="legendGoodValue">Maior nota</label>
+                              <div class="col-sm-6 input-group">
+                                  <input name="legendGoodValue" id="legendGoodValue" type="text" class="form-control input-lg text-center" value="10"/>
+                                  <div id="legendGood">
+                                      <input class="legend-color" id="legendGoodColor" type="text" value="#1A8CEB"/>
+                                      <span class="input-group-append legend-color-span">
+                                          <span class="input-group-text colorpicker-input-addon"><i></i></span>
+                                      </span>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+
+
+                      <div class="w-100 card-header toggable collapse-filter" data-toggle="collapse" data-target="#collapseFilterClass" aria-expanded="true" aria-controls="collapseFilterClass">
+                          <button class="btn btn-link" >
+                              <i class="fa" aria-hidden="false"></i> Filtro por turma
+                              <i class="fas fa-question-circle icon-question"  data-toggle="tooltip" title="Escolha quais turmas você deseja visualizar no gráfico"></i>
+                          </button>
+                      </div>
+                      <div class="collapse show pl-2 pr-2 mt-3" id="collapseFilterClass">
+                          <div id="filterClass" class="form-group row ml-4">
+                              <div>
+                                  <p>Selecione um arquivo para escolher as turmas</p>
+                              </div>
+                          </div>
+                      </div>
+                      <div class="w-100 card-header toggable collapse-filter" data-toggle="collapse" data-target="#collapseSaveViz" aria-expanded="true" aria-controls="collapseFilterClass">
+                          <button class="btn btn-link" >
+                              <i class="fa" aria-hidden="false"></i> Salvar visualização
+                              <i class="fas fa-question-circle icon-question"  data-toggle="tooltip" title="Nomeie e salve sua visualização."></i>
+                          </button>
+                      </div>
+                      <div class="collapse show pl-2 pr-2 mt-3" id="collapseSaveViz">
+                          <div id="filterClass" class="form-group row ml-4">
+                            <form action='#' method='post'>
+                              <input type="hidden" id="fileInput"/>
+                              <input type="text" name="filename" id="filename" placeholder="{{ timestamp }}"/>
+                              <button type="submit" value="submit" name="save_viz" class="btn btn-outline-dark my-2 my-sm-0">Salvar</button>
+                            </form>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+
+
+                <div id="outsideSidebar" class="col px-3 px-md-3 py-3">
+                    <div class="d-flex">
+                        <a id="sidebarToggle" data-toggle="collapse" href="#" data-target=".collapse-sidebar" role="button" class="">
+                            <i class="fa fa-lg"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="full-screen-container">
+            <button id="fullScreen" class="btn btn-secondary">
+                <i class="fa" aria-hidden="false"></i>
+            </button>
+        </div>
+
+        <section class="container custom-container sidebar pl-0">
+            <div class="row mb-3">
+                <div class="col-12 flex" id="graphic-container">
+                    <div id="emptyState" class="text-center w-100">
+                        <p>Nenhum aluno é abrangido pelos filtros escolhidos.</p>
+                    </div>
+                    <div id="notEmptyState">
+                        <div id="info" class="info mt-2 ml-2">
+                            <div class="info-column ml-5">
+                                <p class="text-center h6" id="title"></p>
+                                <div class="text-center" id="zoomGrid">
+                                    <div class="btn-group" role="group" aria-label="Basic example">
+                                        <button id="zoomInGrid" class="btn btn-primary btn-zoom">
+                                            <i class="fas fa-search-plus"></i></i>
+                                        </button>
+                                        <span id="tooltipZoomOut" class="d-inline-block" tabindex="0" data-toggle="tooltip" title="Não é possível reduzir além deste limite">
+                                            <button id="zoomOutGrid" class="btn btn-primary btn-zoom">
+                                                <i class="fas fa-search-minus"></i>
+                                            </button>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="infoLegend" class="info-column ml-5 mr-5">
+                                <p class="text-center h6 ml-3" id="legendTitle">Legenda de notas</p>
+                                <div id="legend" class="mt-2"></div>
+                            </div>
+                            <div id="infoOrder" class="info-column flex-left">
+                                <select id="selectOrder" class="custom-select mb-1">
+                                    <option value="default">Ordenação Inicial</option>
+                                    <option value="leaf">Leaf Order</option>
+                                    <option value="custom" disabled>Ordenação Personalizada</option>
+                                </select>
+                                <p id="currentOrder" class="mb-0"></p>
+                            </div>
+                        </div>
+                        <div id="graphicElements">
+                            <div id="grid" class="text-center mt-4"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="loadingBackground">
+                <div id="loading" class="spinner-border text-primary spinner-size mt-5" role="status">
+                    <span class="sr-only">Loading...</span>
+                </div>
+            </div>
+            <p> </p>
+        </section>
+        <script src="{{ url_for('static', filename='js/jquery-3.2.1.slim.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/popper-1.12.9.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/bootstrap-4.3.1.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/bootstrap-colorpicker-3.1.1.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/d3.v4.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/chroma.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/science-1.9.1.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/tiny-queue.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/reorder-1.0.4.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/loadData.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/filters.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/graphic.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/zoom.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/order.js') }}"></script>
+    </body>
+</html>

@@ -1,0 +1,49 @@
+.btn-link:hover,
+.btn-link:focus {
+    text-decoration: none;
+}
+
+.toggable {
+    cursor: pointer;
+}
+
+.collapse-filter .fa:after {
+    content: '\f078';
+    display: inline-block;
+    -webkit-transform: rotate(0deg);
+    -moz-transform: rotate(0deg);
+    -o-transform: rotate(0deg);
+    -ms-transform: rotate(0deg);
+    transform: rotate(0deg);
+    -webkit-transition: -webkit-transform .3s ease-in-out;
+    -ms-transition: -ms-transform .3s ease-in-out;
+    transition: transform .3s ease-in-out;
+}
+
+.collapse-filter.collapsed .fa:after {
+    content: '\f078';
+    -webkit-transform: rotate(-180deg);
+    -moz-transform: rotate(-180deg);
+    -o-transform: rotate(-180deg);
+    -ms-transform: rotate(-180deg);
+    transform: rotate(-180deg);
+    -webkit-transition: -webkit-transform .3s ease-in-out;
+    -ms-transition: -ms-transform .3s ease-in-out;
+    transition: transform .3s ease-in-out;
+}
+
+input[type='number']::-webkit-inner-spin-button,
+input[type='number']::-webkit-outer-spin-button {
+    -moz-appearance: textfield;
+    -webkit-appearance: none;
+}
+
+input[type='file'] {    max-width: 100%;}
+
+.icon-question {    margin-left: 0.2rem;    vertical-align: middle;}
+
+.legend-color {    display: none;}
+
+.legend-color-span {    height: 100%;}
+
+.colorpicker-bar.colorpicker-preview {    display: none;}

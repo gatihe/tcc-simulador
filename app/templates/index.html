@@ -2,26 +2,139 @@
 {% block title %}Home Page{% endblock %}
 {% block content %}
 <div class="container">
-   <div class="row">
-      <div class="col">
+  {% if "user_id" not in session %}
+  <div class="row">
+    <h3 id="gerador-de-notas-para-disciplinas" style="margin-top:50px;">GradeGen - Gerador de dados educacionais</h1>
+    <p style="text-align:justify;">Este projeto é um Trabalho de Conclusão de Curso para o curso de Sistemas de Informação da Faculdade de Tecnologia da Unicamp. Este projeto objetiva gerar e adaptar conjuntos de dados para dois sistemas de mineração de dados educacionais em elaboração na Faculdade de Tecnologia da UNICAMP. O primeiro sistema é um visualizador de conjuntos de históricos escolares. O foco deste trabalho é desenvolver um gerador de conjuntos de históricos escolares simulados. Esses conjuntos devem ter características programáveis, como por exemplo padrões específicos que se deseja que sejam possíveis de visualizar, e que serão derivadas de demandas de análise de dados já informadas por coordenadores de curso de graduação.</p>
+  </div>
+  <div class="row" style="margin-top:50px;">
+    <div class="col"></div>
+  <div class="col-6">
+    <div class="row">
+      <a style="margin-top:20px" style="margin-top:30px;" href="/login" class="btn btn-outline-success my-2 my-sm-0 btn-block">Login</a>
       </div>
-      <div class="col-10">
-         <h1 id="gerador-de-notas-para-disciplinas">Gerador de notas para disciplinas</h1>
-         <p>Este projeto é um Trabalho de Conclusão de Curso para o curso de Sistemas de Informação da Faculdade de Tecnologia da Unicamp. Este projeto objetiva gerar e adaptar conjuntos de dados para dois sistemas de mineração de dados educacionais em elaboração na Faculdade de Tecnologia da UNICAMP. O primeiro sistema é um visualizador de conjuntos de históricos escolares. O foco deste trabalho é desenvolver um gerador de conjuntos de históricos escolares simulados. Esses conjuntos devem ter características programáveis, como por exemplo padrões específicos que se deseja que sejam possíveis de visualizar, e que serão derivadas de demandas de análise de dados já informadas por coordenadores de curso de graduação.</p>
-         <h5 id="áreas-do-conhecimento-envolvidas-no-trabalho">Áreas do conhecimento envolvidas no trabalho:</h5>
-         <ul>
-         <li>Visualização da Informação</li>
-         <li>Mineração de dados educacionais</li>
-         {% if "user_id" in session %}
-         Olá {{ uid }}
-         {% else %}
-         <form class="form-inline my-2 my-lg-0" action="/login">
-            <a href="/login"><button class="btn btn-outline-success my-2 my-sm-0">Login</button></a>
-         </form>
-         {% endif %}
+      <div style="margin-top:20px" class="row">
+     <a style="margin-top:30px;" href="/login" class="btn btn-outline-success my-2 my-sm-0 btn-block">Manual do usuário</a>
       </div>
-      <div class="col">
+      <div style="margin-top:20px" class="row">
+     <a href="/login" class="btn btn-outline-success my-2 my-sm-0 btn-block">Rode o GradeGen localmente</a>
       </div>
-   </div>
+    </div>
+    <div class="col"></div>
+  </div>
+  {% else %}
+  <div class="row row-no-gutters" style="min-height:200px; margin-top: 50px; border-bottom: solid 1px #d2d2d2; padding-bottom: 20px;">
+  <div class="col-sm-4"><h4 style="">Visualizações salvas</h4>
+  <p style="text-align: justify; margin-top: 20px; font-style: italic;">Explore e gerencie visualizações de simulações anteriormente salvas.</p>
+  </div>
+  <div class="col-sm-8">
+    <div id="accordion" style="margin-top:50px">
+      <div class="card">
+        <div class="card-header" id="headingOne">
+          <h5 class="mb-0">
+            <button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+              Visualizações
+            </button>
+          </h5>
+        </div>
+
+        <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
+          <div class="card-body">
+            <ul class="list-group">
+               {% for saved_viz in saved_viz_group %}
+               <form action="#" method="post">
+               <input type="hidden" id="config_id" name="viz_current" value="{{saved_viz}}">
+               <li class="list-group-item">{{saved_viz}}<span class='pull-right'><button type="submit" name="set_viz" value="submit"> <i class="fa fa-eye" aria-hidden="true"></i></button>  <button type="submit" name="del_viz" value="submit"><i class="fa fa-trash" aria-hidden="true"></i> </button></span></li>
+               </form>
+               {% endfor %}
+
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+
+  <div class="row row-no-gutters" style="min-height:200px; margin-top: 50px; border-bottom: solid 1px #d2d2d2; padding-bottom: 20px;">
+    <div class="col-sm-4">
+    <p style="text-align: center; margin-top: 5px; font-style: italic; float:right">Visualize e configure os fatores que atuam sobre as simulações realizadas</p>
+    <div style="margin-top:20px" class="row">
+   <a style="margin-top:30px; width:300px; margin-left: auto; margin-right: auto;" href="/fatores" class="btn btn-primary my-2 my-sm-0 btn-block">Fatores de impacto</a>
+    </div>
+    </div>
+  <div class="col-sm-4">
+    <p style="text-align: center; margin-top: 5px; font-style: italic; float:right">Entenda como funciona o GradeGen e as melhores formas de utilizá-lo</p>
+    <div style="margin-top:20px" class="row">
+   <a style="margin-top:30px; width:300px; margin-left: auto; margin-right: auto;" href="/login" class="btn btn-primary my-2 my-sm-0 btn-block">Manual do usuário</a>
+    </div>
+  </div>
+  <div class="col-sm-4">
+  <p style="text-align: center; margin-top: 5px; font-style: italic; float:right">Baixe o GradeGen e rode localmente no seu servidor</p>
+  <div style="margin-top:20px; text-align: center;" class="row">
+ <a style="margin-top:30px; width:300px; margin-left: auto; margin-right: auto;" href="/login" class="btn btn-primary my-2 my-sm-0 btn-block">Rodar o GradeGen localmente</a>
+  </div>
+  </div>
+
+  </div>
+
+
+  <div class="row">
+    <div style="text-align:center;" class="col-4">
+      {{ sb_g|safe }}
+    </div>
+    <div style="text-align:center;" class="col-4">
+      {{ rc_g|safe }}
+    </div>
+    <div style="text-align:center;" class="col-4">
+      {{ pct_g|safe }}
+    </div>
+    </div>
+    <div class="row">
+      <div style="text-align:center;" class="col-4">
+        {{ sb_f|safe }}
+      </div>
+      <div style="text-align:center;" class="col-4">
+        {{ rc_f|safe }}
+      </div>
+      <div style="text-align:center;" class="col-4">
+        {{ pct_f|safe }}
+      </div>
+      </div>
+
+      <div class="row">
+        <div class="col">
+
+        </div>
+        <div style="text-align:center;" class="col-4">
+          {{ hard_impact|safe }}
+        </div>
+        <div style="text-align:center;" class="col-4">
+          {{ easy_impact|safe }}
+        </div>
+        <div style="text-align:center;" class="col">
+        </div>
+        </div>
+
+        <div class="row">
+          <div class="col">
+
+          </div>
+          <div style="text-align:center;" class="col-4">
+            {{ abrupt_negative|safe }}
+          </div>
+          <div style="text-align:center;" class="col-4">
+            {{ abrupt_positive|safe }}
+          </div>
+          <div style="text-align:center;" class="col">
+          </div>
+          </div>
+
+
+  </div>
+
+  {% endif %}
 </div>
+
+
 {% endblock %}

@@ -1,0 +1,71 @@
+.w-sidebar {
+    width: 400px;
+    max-width: 400px;
+}
+
+.navbar-collapse {
+    align-items: baseline;
+}
+
+.row.collapse {
+    margin-left: -400px;
+    left: 0;
+    transition: margin-left .15s linear;
+    z-index: 0;
+}
+
+.row.collapse.show {
+    margin-left: 0 !important;
+}
+
+#sidebar.show>.no-transition {
+    background-color: #FFFFFF;
+}
+
+.sidebar-collapse {
+    height: 100vh;
+    margin-left: -35px;
+    margin-right: 15px;
+    padding-left: 35px!important;
+    width: 415px;
+    max-width: 415px;
+}
+
+.row:not(.show):not(.collapsing)>.sidebar-collapse {
+    margin-right: 20px;
+    height: 20px;
+}
+
+.no-transition.row {
+    margin-right: 0;
+    max-height: 100vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.row.collapsing {
+    margin-left: -500px;
+    left: -5%;
+	transition: margin-left .15s linear;
+}
+
+#sidebarToggle {
+    font-size: 1.2rem;
+}
+
+#sidebarToggle .fa:after {
+    content: '\f00d';
+}
+
+#sidebarToggle.collapsed .fa:after {
+    content: '\f0c9';
+}
+
+#sidebar:not(.show) > #outsideSidebar {
+    background: rgba(0, 0, 0, 0);
+}
+
+#outsideSidebar {
+    background: rgba(52, 52, 52, 0.3);
+    margin-left: -15px;
+}

@@ -1,0 +1,57 @@
+.custom-container {
+    margin-left: 2rem;
+    margin-right: 2rem;
+    max-width: 95%;
+}
+
+#loadingBackground {
+    background-color: #fff;
+    bottom: 0;
+    display: none;
+    left: 0;
+    margin: auto;
+    opacity: 0.8;
+    position: fixed;
+    right: 0;
+    top: 0;
+    transform: translate(0);
+    transition: opacity 0.3s linear;
+}
+
+.hiddenLoading {
+    opacity: 0; 
+    z-index: -1;
+}
+
+.spinner-size {
+    display: none;
+    height: 5rem;
+    left: 48%;
+    position: absolute;
+    top: 30%;
+    width: 5rem;
+    transition: opacity 0.3s linear;
+}
+
+.full-screen-container {
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+}
+
+#fullScreen {
+    align-self: flex-end;
+    display: inline-flex;
+    margin-right: .7rem;
+    margin-top: .7rem;
+}
+
+#fullScreen .fa:after {
+    content: '\f31e';
+}
+
+#fullScreen.full .fa:after {
+    content: '\f78c';
+}
+
+section {    margin-top: -2rem;}

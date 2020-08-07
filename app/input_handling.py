@@ -1,8 +1,8 @@
 import os
-from app.new_engine import *
+from app.engine import *
 #######INPUT ERROR HANDLING
 
-####Especial error types:
+####Special error types:
 class Error(Exception):
     pass
 
@@ -32,7 +32,26 @@ class NotASubject(Error):
 
 class NoPrereqs(Error):
     pass
+
 ####Check for error functions:
+def save_viz(storage, user_uid, file_name, timestamp, filename):
+    temp_dir = tempfile.TemporaryDirectory()
+    viz_path_file = temp_dir.name+"/"+"temp_viz.csv"
+    full_file_path = file_name
+    full_file_path = full_file_path.replace('%2F','/')
+    print(viz_path_file)
+    print(full_file_path)
+    current_viz = storage.child(full_file_path).download(viz_path_file)
+    if filename is not None:
+        target_path = user_uid+"/saved_viz/"+filename+".csv"
+    else:
+        target_path = user_uid+"/saved_viz/"+timestamp+".csv"
+    storage.child(target_path).put(viz_path_file)
+    return
+
+
+
+
 def set_catalogo_as_default(storage, user_uid, file_name):
     temp_dir = tempfile.TemporaryDirectory()
     catalog_path_file = temp_dir.name+"/"+"default_catalog.xml"
@@ -67,8 +86,6 @@ def set_catalogo_as_default(storage, user_uid, file_name):
     else:
         print("\nImportação de catálogo cancelada.")
     return subjects, turmas, prereqs, semoffers, credits, cat_info, prereq_report
-
-
 
 def set_config_as_default(storage, user_uid, file_name):
     temp_dir = tempfile.TemporaryDirectory()

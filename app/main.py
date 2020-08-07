@@ -1,33 +1,33 @@
-from flask import Flask, redirect, url_for, render_template, request, session, flash, send_file, Response
+from flask import Flask, redirect, url_for, render_template, request, session, flash, send_file, Response, make_response
 import pyrebase
 from datetime import datetime
 from datetime import timedelta
 import numpy as np
 import pandas as pd
-from app.new_engine import *
+from app.engine import *
 from app.input_handling import *
 import os
 import random
 import time
 import datetime
 import xml.etree.ElementTree as ET
+import zipfile
+from functools import wraps, update_wrapper
+from datetime import datetime
+from flask_cors import CORS, cross_origin
+import flask_fs as fs
+from app.pyrebase_config import *
+import plotly
+import plotly.graph_objects as go
 
-config = {
-    "apiKey": "AIzaSyDaNLLMVZgXPenWO3JMGjKt9TtIEcfDGkk",
-    "authDomain": "simulador-75b51.firebaseapp.com",
-    "databaseURL": "https://simulador-75b51.firebaseio.com",
-    "projectId": "simulador-75b51",
-    "storageBucket": "simulador-75b51.appspot.com",
-    "messagingSenderId": "381390670054",
-    "appId": "1:381390670054:web:a376551235a8d4f88b9327",
-    "measurementId": "G-ZH6T8K1388",
-    "serviceAccount": "/home/guiati9/tcc-simulador/app/imports/configs/simulador-75b51-firebase-adminsdk-cv8yl-ee6529fce6.json"
-    }
+
 firebase = pyrebase.initialize_app(config)
 auth = firebase.auth()
 storage = firebase.storage()
 
 app = Flask(__name__)
+cors = CORS(app)
+app.config['CORS_HEADERS'] = 'Content-Type'
 a = False
 app.secret_key="hello"
 app.permanent_session_lifetime = timedelta(minutes=30)
@@ -42,16 +42,57 @@ def check_session():
         session.pop("user_id",None)
     return
 
-@app.route("/")
+def get_Saved_viz_path(storage, current_viz, user_id):
+    file_path = user_id + "/saved_viz/" + current_viz
+    viz_Url = storage.child(file_path).get_url(None)
+    return viz_Url
+
+@app.route("/", methods=['POST', 'GET'])
 def home():
     check_session()
     if "user_id" in session:
         simulation_Enabled = check_for_current_Catalog_and_Config(session)
-        return render_template('index.html',array_test = [0,2,4,6], uid = session["user_id"], simulation_Enabled = simulation_Enabled)
+        if request.method == "POST":
+            if "del_viz" in request.form:
+                print("teste")
+                viz_current = request.form["viz_current"]
+                print(viz_current)
+                session["current_viz"] = del_viz(session["user_id"], viz_current, session["current_viz"])
+            if "set_viz" in request.form:
+                session["current_viz"] = request.form.get('viz_current')
+                file_path = get_Saved_viz_path(storage, session['current_viz'], session["user_id"])
+                session["viz_path_file"] = file_path
+                print(file_path)
+                timestamp = datetime.now().strftime("%d-%m_%I-%M-%S_%p")
+                return render_template("visualizacao.html", vizz_file = session["viz_path_file"], timestamp = timestamp)
+        saved_viz_group = list_saved_viz(session["user_id"])
+        #fator de sabotagem de notas
+        testeeeee = [0.5,-2,2]
+        pct_g, sb_g, rc_g = generate_graphic_sab_rec_grade(session["grade_sab_rec_factors"])
+        pct_f, sb_f, rc_f = generate_graphic_sab_rec_frequency(session["frequency_sab_rec_factors"])
+        easy_impact, hard_impact = generate_graphic_easy_hard_subjects(session["factors"])
+        abrupt_positive, abrupt_negative = generate_graphic_abrupt_alteration(session["easy_hard_factors"])
+        return render_template('index.html',array_test = [0,2,4,6], uid = session["user_id"], simulation_Enabled = simulation_Enabled, saved_viz_group = saved_viz_group)
     else:
         simulation_Enabled = False
         return render_template('index.html',array_test = [0,2,4,6], simulation_Enabled = simulation_Enabled)
     return render_template('index.html',array_test = [0,2,4,6], uid = None)
+
+@app.route("/fatores")
+def fatores():
+    simulation_Enabled = check_for_current_Catalog_and_Config(session)
+    pct_g, sb_g, rc_g = generate_graphic_sab_rec_grade(session["grade_sab_rec_factors"])
+    pct_f, sb_f, rc_f = generate_graphic_sab_rec_frequency(session["frequency_sab_rec_factors"])
+    easy_impact, hard_impact = generate_graphic_easy_hard_subjects(session["factors"])
+    abrupt_positive, abrupt_negative = generate_graphic_abrupt_alteration(session["easy_hard_factors"])
+    return render_template('fatores.html', simulation_Enabled = simulation_Enabled, pct_g = pct_g, sb_g = sb_g, rc_g = rc_g,pct_f =pct_f, sb_f=sb_f, rc_f=rc_f, easy_impact = easy_impact, hard_impact = hard_impact, abrupt_positive = abrupt_positive, abrupt_negative = abrupt_negative)
+
+def del_viz(user_id, viz, current_viz):
+    storage.delete(user_id+"/saved_viz/"+viz)
+    if viz == current_viz:
+        return 'not_set'
+    else:
+        return current_viz
 
 @app.route('/login/', methods=['POST', 'GET'])
 def login():
@@ -78,8 +119,24 @@ def login():
                 session["frequency_sab_rec_factors"] = [0.3,40,40]
             if session.get('easy_hard_factors') is None:
                 session["easy_hard_factors"] = [2,2]
+            if session.get('factors') is None:
+                session["factors"] = [2,2]
+            if session.get('hard_passes') is None:
+                session["hard_passes"] = []
+            if session.get('easy_passes') is None:
+                session["easy_passes"] = []
+            if session.get('subjects') is None:
+                session["subjects"] = []
+            if session.get('turmas') is None:
+                session["turmas"] = []
+            if session.get('semoffers') is None:
+                session["semoffers"] = []
+            if session.get('credits') is None:
+                session["credits"] = []
+
             session["current_catalogo"] = 'not_set'
             session["current_config"] = 'not_set'
+            session["current_viz"] = 'not_set'
         except:
             return "Please check your credentials"
         return redirect(url_for("user"))
@@ -113,7 +170,7 @@ def importacoes():
                     timestamp = datetime.datetime.now().strftime("%d-%m_%I-%M-%S_%p")
                     try:
                         catalogo = request.files['catalogo']
-                        #catalogo.save('/home/guiati9/tcc-simulador/app/imports/uploads/catalogo.xml')
+                        #catalogo.save('app/imports/uploads/catalogo.xml')
                         storage.child(user_uid+"/"+timestamp+"_catalogo.xml").put(catalogo)
                         print(user_uid)
                         print('importou')
@@ -121,7 +178,7 @@ def importacoes():
                         pass
                     try:
                         configs = request.files['configs']
-                        #configs.save('/home/guiati9/tcc-simulador/app/imports/uploads/configs.xml')
+                        #configs.save('app/imports/uploads/configs.xml')
                         print(user_uid)
                         storage.child(user_uid+"/"+timestamp+"_configs.xml").put(configs)
                         print('importou')
@@ -143,6 +200,7 @@ def importacoes():
                 if "del_catalogo" in request.form:
                     catalog_current = request.form["catalog_current"]
                     session["current_catalogo"] = del_catalogo(user_uid, catalog_current, session["current_catalogo"])
+
                 if "del_config" in request.form:
                     config_current = request.form["config_current"]
                     session["current_config"] = del_config(user_uid, config_current, session["current_config"])
@@ -186,6 +244,20 @@ def list_imports(user_id):
                     all_imported_catalogs.append(catalog_name)
     return all_imported_catalogs, all_imported_configs
 
+def list_saved_viz(user_id):
+    all_saved_viz = []
+    all_imported_viz = []
+    all_files = storage.list_files()
+    for file in all_files:
+        full_file_path = storage.child(file.name).get_url(None)
+        if user_id in full_file_path:
+            if "saved_viz" in full_file_path:
+                print(full_file_path)
+                viz_name = full_file_path[117:-10]
+                if viz_name not in all_imported_viz:
+                    all_imported_viz.append(viz_name)
+    return all_imported_viz
+
 
 @app.route('/reset_configs/')
 def reset_configs():
@@ -195,7 +267,33 @@ def reset_configs():
     session["params"], session["factors"], session["hard_passes"], session["easy_passes"], session["generic_config_info"] = set_config_as_default(storage, user_uid, session["current_config"])
     return redirect(url_for("importacoes"))
 
+@app.after_request
+def after_request(response):
+  response.headers.add('Access-Control-Allow-Origin', '*')
+  response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
+  response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
+  return response
 
+@app.route('/visualizacao/', methods=['GET','POST'])
+@cross_origin()
+def visualizacao():
+    filename = None
+    vizz_path_file = storage.child("sEoW3983DKMgaEqnj5gjvh1cs462/vizz/visualizacao (1).csv").get_url(None)
+    #this is what vizz_path_file returns \/
+    vizz_test = "https://firebasestorage.googleapis.com/v0/b/simulador-75b51.appspot.com/o/sEoW3983DKMgaEqnj5gjvh1cs462%2Fvizz%2Fvisualizacao%20%281%29.csv?alt=media"
+    if request.method == 'POST':
+        if "save_viz" in request.form:
+            timestamp = "vis_"+ datetime.now().strftime("%d-%m_%I-%M-%S_%p")
+            filename = request.form.get('filename')
+            print(timestamp)
+            save_viz(storage, session["user_id"], session["current_viz"], timestamp, filename)
+            print(filename)
+            print(session["current_viz"])
+    else:
+        filename = None
+        timestamp = "vis_"+ datetime.now().strftime("%d-%m_%I-%M-%S_%p")
+    print(session["viz_path_file"])
+    return render_template("visualizacao.html", vizz_file = session["viz_path_file"], vizz_test = vizz_test, timestamp = timestamp)
 
 @app.route('/disciplinas/', methods=['GET','POST'])
 def disciplinas():
@@ -231,16 +329,9 @@ def check_for_current_Catalog_and_Config(session):
     available_catalog_imports = []
     available_config_imports = []
     if "user_id" in session:
-        print("ok")
         if "current_catalogo" in session and "current_config" in session:
-            print("ok2")
             available_catalog_imports, available_config_imports = list_imports(session["user_id"])
-            print(available_catalog_imports)
-            print(session["current_catalogo"])
-            print(available_config_imports)
-            print(session["current_config"])
             if session["current_catalogo"] in available_catalog_imports and session["current_config"] in available_config_imports:
-                print("ok3")
                 #check if used params are populated
                 if "params" in session and "factors" in session and "hard_passes" in session and "easy_passes" in session and "generic_config_info" in session and "subjects" in session and "turmas" in session and "prereqs" in session and "semoffers"  in session and "credits" in session and "cat_info" in session and "prereq_report" in session and "grade_sab_rec_factors" in session and "frequency_sab_rec_factors" in session and "easy_hard_factors" in session:
                     simulation_Enabled = True
@@ -290,9 +381,6 @@ def parametros():
         if request.method == 'POST':
             if "get_params_info" in request.form:
                 selected_params = request.form.getlist('selected_params')
-                print(selected_params)
-                for i in selected_params:
-                    print (i)
                 for selected_param in selected_params:
                     print(selected_param)
                     single_param_dict = {}
@@ -330,7 +418,7 @@ def parametros():
                     removed_param_name = request.form.get('param_to_edit')
                     session["params"] = del_parameter(session["params"], removed_param_name)
                     param_names = listar_parametros(session["params"])
-                    return render_template("parametros.html", simulation_Enabled = simulation_Enabled, param_names = param_names,  user_default_files = user_default_files)
+                    return render_template("parametros.html", simulation_Enabled = simulation_Enabled, param_names = param_names)
                 except ValueError:
                     pass
             if "new_param" in request.form:
@@ -392,8 +480,18 @@ def configuracoes_adicionais():
                     session["easy_hard_factors"].clear()
                 session["easy_hard_factors"].append(float(negative_impact))
                 session["easy_hard_factors"].append(float(positive_impact))
-            return render_template("configuracoes_adicionais.html")
-        return render_template("configuracoes_adicionais.html", simulation_Enabled = simulation_Enabled, user_default_catalog = session["user_default_catalog"], user_default_config = session["user_default_config"])
+            if "remove_hard_pass" in request.form:
+                print("entrei")
+                hard_passes_to_remove = request.form.getlist('hp_rmv')
+                for hard_pass in hard_passes_to_remove:
+                    session["hard_passes"] = [x for x in session["hard_passes"] if x != hard_pass]
+            if "remove_easy_pass" in request.form:
+                print("entrei")
+                easy_passes_to_remove = request.form.getlist('ep_rmv')
+                for easy_pass in easy_passes_to_remove:
+                    session["easy_passes"] = [x for x in session["easy_passes"] if x != easy_pass]
+            return render_template("configuracoes_adicionais.html", simulation_Enabled = simulation_Enabled, user_default_catalog = session["user_default_catalog"], user_default_config = session["user_default_config"], hard_passes = session["hard_passes"], easy_passes = session["easy_passes"])
+        return render_template("configuracoes_adicionais.html", simulation_Enabled = simulation_Enabled, user_default_catalog = session["user_default_catalog"], user_default_config = session["user_default_config"], hard_passes = session["hard_passes"], easy_passes = session["easy_passes"])
     else:
         return redirect(url_for("login"))
 
@@ -418,12 +516,17 @@ def simulacao():
     #             return "Please check your credentials"
     #         return redirect(url_for("user"))
     #     global simulation_lock
-        simulation, simulation_array, tempo_max_integralizacao, qtde_de_disciplinas_semestre_impar, qtde_de_disciplinas_semestre_par, subss, students_data, prereqs_report_export, std_records, std_info_export = new_simulation(session["params"], session["factors"], session["hard_passes"], session["easy_passes"], session["generic_config_info"], session["subjects"], session["turmas"], session["prereqs"], session["semoffers"], session["credits"], session["cat_info"], session["prereq_report"], session["grade_sab_rec_factors"], session["frequency_sab_rec_factors"], session["easy_hard_factors"])
-        #with open("/home/guiati9/tcc-simulador/app/imports/log.txt", "r") as f:
+        #delete all temp viz before simulation
+        simulation, simulation_array, tempo_max_integralizacao, qtde_de_disciplinas_semestre_impar, qtde_de_disciplinas_semestre_par, subss, students_data, prereqs_report_export, std_records, std_info_export, testeee, students, subs_final_export = new_simulation(session["params"], session["factors"], session["hard_passes"], session["easy_passes"], session["generic_config_info"], session["subjects"], session["turmas"], session["prereqs"], session["semoffers"], session["credits"], session["cat_info"], session["prereq_report"], session["grade_sab_rec_factors"], session["frequency_sab_rec_factors"], session["easy_hard_factors"])
+        timestamp = datetime.now().strftime("%d-%m_%I-%M-%S_%p")
+        session["viz_path_file"], session["current_viz"] = allocate_temp_viz(testeee,students, subs_final_export, session["generic_config_info"], storage, timestamp, session["user_id"])
+        print(session["viz_path_file"])
+
+        #with open("app/imports/log.txt", "r") as f:
             #content = f.read()
-        a_file = open("/home/guiati9/tcc-simulador/app/imports/log.txt", "r")
+        a_file = open("app/imports/log.txt", "r")
         lines = a_file.readlines()
-        return render_template('simulacao.html', simulation_Enabled = simulation_Enabled, simulation_table=[simulation.to_html(classes='table table-striped table-sm', header="false",justify="left", border="0", index=False)], prereqs_table=[prereqs_report_export.to_html(classes='table table-striped table-sm', header="false",justify="left", border="0", index=False)],std_records_table=[std_records.to_html(classes='table table-striped table-sm', header="false",justify="left", border="0", index=False)],std_info_table=[std_info_export.to_html(classes='table table-striped table-sm', header="false",justify="left", border="0", index=False)],params = session["subjects"],  lines = lines, user_default_catalog = session["user_default_catalog"], user_default_config = session["user_default_config"])
+        return render_template('simulacao.html', simulation_Enabled = simulation_Enabled, simulation_table=[simulation.to_html(classes='table table-striped table-sm', header="false",justify="left", border="0")], prereqs_table=[prereqs_report_export.to_html(classes='table table-striped table-sm', header="false",justify="left", border="0", index=False)],std_records_table=[std_records.to_html(classes='table table-striped table-sm', header="false",justify="left", border="0", index=False)],std_info_table=[std_info_export.to_html(classes='table table-striped table-sm', header="false",justify="left", border="0", index=False)],params = session["subjects"],  lines = lines, user_default_catalog = session["user_default_catalog"], user_default_config = session["user_default_config"], testeee = testeee)
     else:
         return redirect(url_for("login"))
 
@@ -433,7 +536,7 @@ def logout():
     global simulation_lock
     auth.current_user = None
     if "user_id" in session:
-        flash("you have been logged out", "info")
+        flash("Usuário desconectado", "info")
     session.pop("user_id",None)
     simulation_lock = True
     return redirect(url_for("login"))
@@ -441,7 +544,7 @@ def logout():
 
 @app.route('/download_curso/')
 def download_curso():
-    with open("/home/guiati9/tcc-simulador/app/exports/curso.csv") as fp:
+    with open("app/exports/curso.csv") as fp:
         csv = fp.read()
     return Response(
         csv,
@@ -451,7 +554,7 @@ def download_curso():
 
 @app.route('/download_info_std/')
 def download_info_std():
-    with open("/home/guiati9/tcc-simulador/app/exports/info_std.csv") as fp:
+    with open("app/exports/info_std.csv") as fp:
         csv = fp.read()
     return Response(
         csv,
@@ -461,7 +564,7 @@ def download_info_std():
 
 @app.route('/download_historicos/')
 def download_historicos():
-    with open("/home/guiati9/tcc-simulador/app/exports/historicos.csv") as fp:
+    with open("app/exports/historicos.csv") as fp:
         csv = fp.read()
     return Response(
         csv,
@@ -471,7 +574,7 @@ def download_historicos():
 
 @app.route('/download_prerequisitos/')
 def download_prerequisitos():
-    with open("/home/guiati9/tcc-simulador/app/exports/prerequisitos.csv") as fp:
+    with open("app/exports/prerequisitos.csv") as fp:
         csv = fp.read()
     return Response(
         csv,
@@ -481,7 +584,7 @@ def download_prerequisitos():
 
 @app.route('/download_visualizacao/')
 def projeto_rafael():
-    with open("/home/guiati9/tcc-simulador/app/exports/export_visualizacao.csv") as fp:
+    with open("app/exports/export_visualizacao.csv") as fp:
         csv = fp.read()
     return Response(
         csv,
@@ -489,13 +592,190 @@ def projeto_rafael():
         headers={"Content-disposition":
                  "attachment; filename=visualizacao.csv"})
 
-
+@app.route('/download_all')
+def download_all():
+    zipf = zipfile.ZipFile('Name.zip','w', zipfile.ZIP_DEFLATED)
+    for root,dirs, files in os.walk('exports/'):
+        for file in files:
+            zipf.write('app/'+file)
+    zipf.close()
+    return send_file('Name.zip',
+            mimetype = 'zip',
+            attachment_filename= 'Name.zip',
+            as_attachment = True)
 
 if __name__ == '__main__':
     app.run(debug=True)
+    app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
 
+@app.context_processor
+def utility_functions():
+    def print_in_console(message):
+        print(message)
 
+    return dict(mdebug=print_in_console)
 
 
 
 #functions being called
+def generate_graphic_sab_rec_grade(sab_rec_factors):
+    percentage_fig = go.Figure(go.Indicator(
+        domain = {'x': [0, 1], 'y': [0, 1]},
+        value = sab_rec_factors[0]*100,
+        mode = "gauge+number",
+        title = {'text': "Alunos afetados"},
+        delta = {'reference': 0},
+        gauge = {'axis': {'range': [0, 100]},
+                 'bar': {'color': 'gray'},
+                 'steps' : [
+                     {'range': [-100, 100], 'color': "rgba(0,0,0,0)"}]}))
+    percentage_fig.update_layout(
+        margin=dict(l=0, r=0, t=70, b=70),
+        paper_bgcolor="rgba(0,0,0,0)",
+    )
+    percentage = percentage_fig.to_html(default_height=250)
+    sab_fig = go.Figure(go.Indicator(
+        domain = {'x': [0, 1], 'y': [0, 1]},
+        value = sab_rec_factors[1]*-1,
+        mode = "gauge+number",
+        title = {'text': "Sabotagem"},
+        delta = {'reference': 0},
+        gauge = {'axis': {'range': [0, -10]},
+                 'bar': {'color': 'gray'},
+                 'steps' : [
+                     {'range': [-10, 10], 'color': "rgba(0,0,0,0)"}]}))
+    sab_fig.update_layout(
+        margin=dict(l=0, r=0, t=70, b=70),
+        paper_bgcolor="rgba(0,0,0,0)",
+    )
+    sab = sab_fig.to_html(default_height=250)
+    rec_fig = go.Figure(go.Indicator(
+        domain = {'x': [0, 1], 'y': [0, 1]},
+        value = sab_rec_factors[2],
+        mode = "gauge+number",
+        title = {'text': "Recuperação"},
+        delta = {'reference': 0},
+        gauge = {'axis': {'range': [0, 10]},
+                 'bar': {'color': 'gray'},
+                 'steps' : [
+                     {'range': [-10, 10], 'color': "rgba(0,0,0,0)"}]}))
+    rec_fig.update_layout(
+        margin=dict(l=0, r=0, t=70, b=70),
+        paper_bgcolor="rgba(0,0,0,0)",
+    )
+    rec = rec_fig.to_html(default_height=250)
+    return percentage, sab, rec
+
+def generate_graphic_sab_rec_frequency(sab_rec_factors):
+    percentage_fig = go.Figure(go.Indicator(
+        domain = {'x': [0, 1], 'y': [0, 1]},
+        value = sab_rec_factors[0]*100,
+        mode = "gauge+number",
+        title = {'text': "Alunos afetados"},
+        delta = {'reference': 0},
+        gauge = {'axis': {'range': [0, 100]},
+                 'bar': {'color': 'gray'},
+                 'steps' : [
+                     {'range': [-100, 100], 'color': "rgba(0,0,0,0)"}]}))
+    percentage_fig.update_layout(
+        margin=dict(l=0, r=0, t=70, b=70),
+        paper_bgcolor="rgba(0,0,0,0)",
+    )
+    percentage = percentage_fig.to_html(default_height=250)
+    sab_fig = go.Figure(go.Indicator(
+        domain = {'x': [0, 1], 'y': [0, 1]},
+        value = sab_rec_factors[1]*-1,
+        mode = "gauge+number",
+        title = {'text': "Sabotagem"},
+        delta = {'reference': 0},
+        gauge = {'axis': {'range': [0, -100]},
+                 'bar': {'color': 'gray'},
+                 'steps' : [
+                     {'range': [-100, 100], 'color': "rgba(0,0,0,0)"}]}))
+    sab_fig.update_layout(
+        margin=dict(l=0, r=0, t=70, b=70),
+        paper_bgcolor="rgba(0,0,0,0)",
+    )
+    sab = sab_fig.to_html(default_height=250)
+    rec_fig = go.Figure(go.Indicator(
+        domain = {'x': [0, 1], 'y': [0, 1]},
+        value = sab_rec_factors[2],
+        mode = "gauge+number",
+        title = {'text': "Recuperação"},
+        delta = {'reference': 0},
+        gauge = {'axis': {'range': [0, 100]},
+                 'bar': {'color': 'gray'},
+                 'steps' : [
+                     {'range': [-100, 100], 'color': "rgba(0,0,0,0)"}]}))
+    rec_fig.update_layout(
+        margin=dict(l=0, r=0, t=70, b=70),
+        paper_bgcolor="rgba(0,0,0,0)",
+    )
+    rec = rec_fig.to_html(default_height=250)
+    return percentage, sab, rec
+
+def generate_graphic_easy_hard_subjects(easy_hard_factors):
+    rec_fig = go.Figure(go.Indicator(
+        domain = {'x': [0, 1], 'y': [0, 1]},
+        value = easy_hard_factors[0],
+        mode = "gauge+number",
+        title = {'text': "Impacto positivo"},
+        delta = {'reference': 0},
+        gauge = {'axis': {'range': [0, 10]},
+                 'bar': {'color': 'gray'},
+                 'steps' : [
+                     {'range': [-10, 10], 'color': "rgba(0,0,0,0)"}]}))
+    rec_fig.update_layout(
+        margin=dict(l=0, r=0, t=70, b=70),
+        paper_bgcolor="rgba(0,0,0,0)",
+    )
+    rec = rec_fig.to_html(default_height=250)
+    sab_fig = go.Figure(go.Indicator(
+        domain = {'x': [0, 1], 'y': [0, 1]},
+        value = easy_hard_factors[1]*-1,
+        mode = "gauge+number",
+        title = {'text': "Impacto negativo"},
+        delta = {'reference': 0},
+        gauge = {'axis': {'range': [0, -10]},
+                 'bar': {'color': 'gray'},
+                 'steps' : [
+                     {'range': [-10, 10], 'color': "rgba(0,0,0,0)"}]}))
+    sab_fig.update_layout(
+        margin=dict(l=0, r=0, t=70, b=70),
+        paper_bgcolor="rgba(0,0,0,0)",
+    )
+    sab = sab_fig.to_html(default_height=250)
+    return rec, sab
+
+def generate_graphic_abrupt_alteration(easy_hard_factors):
+    rec_fig = go.Figure(go.Indicator(
+        domain = {'x': [0, 1], 'y': [0, 1]},
+        value = easy_hard_factors[0],
+        mode = "gauge+number",
+        title = {'text': "Impacto positivo"},
+        delta = {'reference': 0},
+        gauge = {'axis': {'range': [0, 10]},
+                 'bar': {'color': 'gray'},
+                 'steps' : [
+                     {'range': [-10, 10], 'color': "rgba(0,0,0,0)"}]}))
+    rec_fig.update_layout(
+        margin=dict(l=0, r=0, t=70, b=70),
+        paper_bgcolor="rgba(0,0,0,0)",
+    )
+    rec = rec_fig.to_html(default_height=250)
+    sab_fig = go.Figure(go.Indicator(
+        domain = {'x': [0, 1], 'y': [0, 1]},
+        value = easy_hard_factors[1]*-1,
+        mode = "gauge+number",
+        title = {'text': "Impacto negativo"},
+        delta = {'reference': 0},
+        gauge = {'axis': {'range': [0, -10]},
+                 'bar': {'color': 'gray'},
+                 'steps' : [
+                     {'range': [-10, 10], 'color': "rgba(0,0,0,0)"}]}))
+    sab_fig.update_layout(
+        margin=dict(l=0, r=0, t=70, b=70),
+        paper_bgcolor="rgba(0,0,0,0)",
+    )
+    sab = sab_fig.to_html(default_height=250)
+    return rec, sab

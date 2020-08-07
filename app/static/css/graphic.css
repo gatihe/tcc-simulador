@@ -1,0 +1,57 @@
+.axis .domain               {    display: none; }
+.axis .tick text.selected   {    fill: #003366;    font-weight: bold;    font-size: 0.85rem; }
+.axis .tick line.selected   {    stroke: #003366; }
+#legend                     {    margin-bottom: 0.7rem;}
+#legend text                {    font-size: 0.9rem;}
+.label                      {    font-size: 0.8rem;}
+#graphicElements {    height: 0;}
+#grid {
+    margin-bottom: 3rem;
+    overflow-x: auto;
+    overflow-y: hidden;
+}
+
+#legendTitle,
+#zoomInGrid,
+#zoomOutGrid {    display: none;}
+.btn.disabled {    pointer-events: none;}
+
+#zoomOutGrid {
+    border-bottom-left-radius: 0;
+    border-top-left-radius: 0;
+}
+
+#emptyState {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    height: 90vh;
+}
+g g.tick > text:hover {
+    cursor: pointer;
+    fill: #003366;
+    font-weight: bold;
+    font-size: 0.85rem;
+}
+.info {
+    display: flex;
+    align-items: center;
+    width: 95%;
+}
+.info-column {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    width: 20%;
+    z-index: inherit;
+}
+#infoLegend {    width: 40%;}
+#infoOrder  {
+    display: none;
+    overflow-x: auto;
+    overflow-y: hidden;
+    white-space: nowrap;
+    width: 60%;
+}
+
+.flex-left {    align-items: flex-start;}

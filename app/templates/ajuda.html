@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% block title %}Home Page{% endblock %}
+{% block content %}
+<div class="container">
+   <div class="row">
+      <div class="col">
+      </div>
+      <div class="col-10">
+         <h1 id="gerador-de-notas-para-disciplinas">GradeGen - Gerador de notas para disciplinas</h1>
+         <p>Este projeto é um Trabalho de Conclusão de Curso para o curso de Sistemas de Informação da Faculdade de Tecnologia da Unicamp. Este projeto objetiva gerar e adaptar conjuntos de dados para dois sistemas de mineração de dados educacionais em elaboração na Faculdade de Tecnologia da UNICAMP. O primeiro sistema é um visualizador de conjuntos de históricos escolares. O foco deste trabalho é desenvolver um gerador de conjuntos de históricos escolares simulados. Esses conjuntos devem ter características programáveis, como por exemplo padrões específicos que se deseja que sejam possíveis de visualizar, e que serão derivadas de demandas de análise de dados já informadas por coordenadores de curso de graduação.</p>
+         <h5 id="áreas-do-conhecimento-envolvidas-no-trabalho">Áreas do conhecimento envolvidas no trabalho:</h5>
+         <ul>
+         <li>Visualização da Informação</li>
+         <li>Mineração de dados educacionais</li>
+         {% if "user_id" in session %}
+         Olá {{ uid }}
+         <div class="col-12">
+           <div id="accordion" style="margin-top:10px">
+             <div class="card">
+               <div class="card-header" id="headingOne">
+                 <h5 class="mb-0">
+                   <button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                     Últimas simulações
+                   </button>
+                 </h5>
+               </div>
+
+               <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
+                 <div class="card-body">
+                   <ul class="list-group">
+                      {% for saved_viz in saved_viz_group %}
+                      <form action="#" method="post">
+                      <input type="hidden" id="config_id" name="viz_current" value="{{saved_viz}}">
+                      <li class="list-group-item">{{saved_viz}}<span class='pull-right'><button type="submit" name="set_viz" value="submit"> <i class="fa fa-eye" aria-hidden="true"></i></button>  <button type="submit" name="del_viz" value="submit"><i class="fa fa-trash" aria-hidden="true"></i> </button></span></li>
+                      </form>
+                      {% endfor %}
+
+                   </ul>
+                 </div>
+               </div>
+             </div>
+           </div>
+         </div>
+         {% else %}
+         <form class="form-inline my-2 my-lg-0" action="/login">
+            <a href="/login"><button class="btn btn-outline-success my-2 my-sm-0">Login</button></a>
+         </form>
+         {% endif %}
+      </div>
+      <div class="col">
+      </div>
+   </div>
+</div>
+{% endblock %}

@@ -202,7 +202,11 @@ a:focus, a:active, button::-moz-focus-inner, input::-moz-focus-inner, select::-m
   margin-top: 50px; }
 
 hr {
-  border-color: #daddd9; }
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  border: 0;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+ }
 
 .wrapper {
   position: relative;

@@ -1,4 +1,4 @@
------------------------ LOG DA SIMULACAO --------------------------
+----------------------- DETALHES --------------------------
 - Quantidade de alunos simulados: 30.
 - Tempo máximo de integralização: 12.
 - Máximo de créditos por semestre: 28.
@@ -19,17 +19,21 @@ Impacto negativo: - 0 á 2
 Impacto positivo: + 0 á 2
 -------------------
 -------------------
+- Disciplina: ST562;
+- Semestre sorteado: 12;
+- Impacto: positivo.
+-------------------
 -------------------------------------------------------------------
 Sabotagem e recuperação de notas: 
 Qtde. de alunos: 9.0
-Qtde. alunos com impacto negativo: 2
+Qtde. alunos com impacto negativo: 5
 Fator de impacto negativo: - 0 à 2
-Qtde. alunos com impacto positivo: 7
+Qtde. alunos com impacto positivo: 4
 Fator de impacto positivo: + 0 à 2
 -------------------------------------------------------------------
 Sabotagem e recuperação de frequência: 
 Qtde. de alunos: 9.0
-Qtde. alunos com impacto negativo: 7
+Qtde. alunos com impacto negativo: 8
 Fator de impacto negativo: - 0 à 40
-Qtde. alunos com impacto positivo: 2
+Qtde. alunos com impacto positivo: 1
 Fator de impacto positivo: + 0 à 40
