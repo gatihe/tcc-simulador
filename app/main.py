@@ -143,6 +143,7 @@ def importacoes():
                     session["params"], session["factors"], session["hard_passes"], session["easy_passes"], session["generic_config_info"] = set_config_as_default(storage, user_uid, session["current_config"])
                 if "del_catalogo" in request.form:
                     catalog_current = request.form["catalog_current"]
+                    session["current_catalogo"] = del_catalogo(user_uid, catalog_current, session["current_catalogo"])
                 if "del_config" in request.form:
                     config_current = request.form["config_current"]
                     session["current_config"] = del_config(user_uid, config_current, session["current_config"])
