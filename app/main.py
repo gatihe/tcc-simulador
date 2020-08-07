@@ -38,9 +38,8 @@ email = ''
 
 
 def check_session():
-    if session.get('user_id') is None:
-        if auth.current_user is None:
-            session.pop("user_id",None)
+    if auth.current_user is None:
+        session.pop("user_id",None)
     return
 
 @app.route("/")
