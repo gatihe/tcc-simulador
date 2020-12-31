@@ -25,7 +25,7 @@ import json
 #params = ["Below Average", 0, 5, 10, "Average", 5, 7, 10, "Above Average", 7, 10, 10]
 #params_total = len(params)/4
 #factors = []
-#students_data = []
+#studentsData = []
 maxCompletionTime = 12
 students = []
 #ja_simulou = 0
@@ -130,7 +130,7 @@ def exporting_to_tool(simulationArray, evenSemSubjAmount,oddSemSubjAmount, subje
     return realFinalToolExport, subjectsFinalExport
 
 
-def sorteio_de_turmas_dificeis_e_faceis(subjects, maxCompletionTime, even_semester, odd_semester):
+def sorteio_de_turmas_dificeis_e_faceis(subjects, maxCompletionTime, evenSemester, oddSemester):
     #define how many subjects
     raffleEasyHard = []
 
@@ -142,9 +142,9 @@ def sorteio_de_turmas_dificeis_e_faceis(subjects, maxCompletionTime, even_semest
     while(cont<amountOfOcurrences):
         raffledSubject = subjects[random.randint(1,len(subjects))-1]
         raffleEasyHard.append(raffledSubject)
-        if raffledSubject in even_semester:
+        if raffledSubject in evenSemester:
             raffledSemester = random.randrange(2, maxCompletionTime +1, 2)
-        if raffledSubject in odd_semester:
+        if raffledSubject in oddSemester:
             raffledSemester = random.randrange(1, maxCompletionTime +1, 2)
         raffleEasyHard.append(raffledSemester)
         raffleEasyHard.append(random.randint(0,1))
@@ -184,7 +184,7 @@ def getting_catalog_info_from_file(filename):
             parsedCurriculumInfo.append(int(courseIds.text))
         for year in cat.findall('year'):
             parsedCurriculumInfo.append(int(year.text))
-        for maxYears in cat.findall('max_years'):
+        for maxYears in cat.findall('yearsLimit'):
             parsedCurriculumInfo.append(int(maxYears.text))
     return parsedCurriculumInfo
 
@@ -211,7 +211,7 @@ def rank_students(crs_list):
 
 def export_student_data(students, maxCompletionTime, oddSemSubjAmount, evenSemSubjAmount, simulationArray, subjectsAsHeader, subjects, credits, startingYear, cat_info):
     l = 0
-    students_data = []
+    studentsData = []
     while (l<len(students)):
         c = 1
         individualStudentData = []
@@ -239,15 +239,15 @@ def export_student_data(students, maxCompletionTime, oddSemSubjAmount, evenSemSu
                     individualStudentData.append(credits[subjects.index(subjectsAsHeader[beginingSemester+1])])
                 beginingSemester = beginingSemester + 3
             semesterCounter = semesterCounter + 1
-        students_data.append(individualStudentData)
+        studentsData.append(individualStudentData)
         l = l +1
 
-    crs, med_crs, desv_padrao = calc_std_crs(students_data)
+    crs, medCrs, standardDeviation = calc_std_crs(studentsData)
 
     info_std = []
     stdIndividualInfo = []
     l = 0
-    while(l<len(students_data)):
+    while(l<len(studentsData)):
         accomplishedCredits = 0
         stdIndividualInfo = []
         m = 0
@@ -259,43 +259,42 @@ def export_student_data(students, maxCompletionTime, oddSemSubjAmount, evenSemSu
 
 
         #crp
-        performanceCoefficient = crs[crs.index(students_data[l][j-2])+1]
-        standardPerformanceCoefficient = ((performanceCoefficient - med_crs)/desv_padrao)
+        performanceCoefficient = crs[crs.index(studentsData[l][j-2])+1]
+        standardPerformanceCoefficient = ((performanceCoefficient - medCrs)/standardDeviation)
 
 
-        stdIndividualInfo.append(students_data[l][j-2]) #RA                  (0)
+        stdIndividualInfo.append(studentsData[l][j-2]) #RA                  (0)
         stdIndividualInfo.append(startingYear[0]) #ANOING             (1)
         stdIndividualInfo.append(2) #PINGR POR ENQUANTO SERA 2               (2)
         stdIndividualInfo.append(cat_info[1]) #DANOCAT = ANOCATALOGO         (3)
         stdIndividualInfo.append(cat_info[0]) #numero do CURSO               (4)
         stdIndividualInfo.append(startingYear[0]) #ANOING             (5)
         stdIndividualInfo.append(cat_info[1]) #ANO_CATALOGO = ANOCATALOGO    (6)
-        stdIndividualInfo.append(round(crs[crs.index(students_data[l][j-2])+1],3)) #CR - VAI SER CALCULADO DEPOIS           (7)
+        stdIndividualInfo.append(round(crs[crs.index(studentsData[l][j-2])+1],3)) #CR - VAI SER CALCULADO DEPOIS           (7)
         stdIndividualInfo.append(0) #CP -           (8)
         stdIndividualInfo.append(0) #CP FUTURO  (9)
-        stdIndividualInfo.append(crs[crs.index(students_data[l][j-2])-1]) #POSICAO_ALUNO_NA_TURMA(10)
+        stdIndividualInfo.append(crs[crs.index(studentsData[l][j-2])-1]) #POSICAO_ALUNO_NA_TURMA(10)
         stdIndividualInfo.append(round(standardPerformanceCoefficient,3)) #CR PADRAO - VAI SER CALCULADO DEPOIS    (11)
-        stdIndividualInfo.append(round(med_crs,3)) #CR MEDIO - VAI SER CALCULADO DEPOIS    (12)
-        stdIndividualInfo.append(round(desv_padrao,3)) #DESVIO_PADRAO_TURMA                     (13)
+        stdIndividualInfo.append(round(medCrs,3)) #CR MEDIO - VAI SER CALCULADO DEPOIS    (12)
+        stdIndividualInfo.append(round(standardDeviation,3)) #DESVIO_PADRAO_TURMA                     (13)
         stdIndividualInfo.append(len(students))  #TOTAL_ALUNOS_TURMA         (14)
-        while(j<len(students_data[l])):
-            if students_data[l][j+1] >= 5 and students_data[l][j+2] >= 75:
-                accomplishedCredits = accomplishedCredits + students_data[l][j+4]
+        while(j<len(studentsData[l])):
+            if studentsData[l][j+1] >= 5 and studentsData[l][j+2] >= 75:
+                accomplishedCredits = accomplishedCredits + studentsData[l][j+4]
             j = j+5
         stdIndividualInfo[8] = round(accomplishedCredits/courseTotalCredits,3)
         stdIndividualInfo[9] = round(accomplishedCredits/courseTotalCredits,3)
         info_std.append(stdIndividualInfo)
         l = l+1
 
-    return info_std, students_data
+    return info_std, studentsData
 
 def calc_desvio_padrao():
     return desvio_padrao
 
-def calc_cr(std_data):
-    teste = get_students_records(students_data)
-    print(teste)
-    return teste
+def calc_cr(stdData):
+    testCalcCR = get_students_records(studentsData)
+    return testCalcCR
 
 def calc_stdinfo(subjects, students, gradeslc, subjectsAsHeader):
     j = 0
@@ -311,91 +310,91 @@ def calc_stdinfo(subjects, students, gradeslc, subjectsAsHeader):
 def getting_turmas_config_from_file(filename):
     tree = ET.parse(filename)
     root = tree.getroot()
-    parsed_turmas = []
-    for config_param in root.findall('subjects'):
-        for subject in config_param.findall('subject'): # access each subject
-            individual_qtde_turmas = subject.findall('classes_no')
-            for x in individual_qtde_turmas:
-                parsed_turmas.append(int(x.text))
-    return parsed_turmas
+    parsedClasses = []
+    for parseArray in root.findall('subjects'):
+        for subject in parseArray.findall('subject'): # access each subject
+            individualClassesQty = subject.findall('classes_no')
+            for x in individualClassesQty:
+                parsedClasses.append(int(x.text))
+    return parsedClasses
 
 def getting_credits_config_from_file(filename):
     tree = ET.parse(filename)
     root = tree.getroot()
-    parsed_credits = []
-    for config_param in root.findall('subjects'):
-        for subject in config_param.findall('subject'): # access each subject
-            individual_qtde_credits = subject.findall('credits')
-            for x in individual_qtde_credits:
-                parsed_credits.append(int(x.text))
-    return parsed_credits
+    parsedCredits = []
+    for parseArray in root.findall('subjects'):
+        for subject in parseArray.findall('subject'): # access each subject
+            individualAmountOfCredits = subject.findall('credits')
+            for x in individualAmountOfCredits:
+                parsedCredits.append(int(x.text))
+    return parsedCredits
 
 def getting_semoffer_config_from_file(filename):
     tree = ET.parse(filename)
     root = tree.getroot()
-    parsed_semoffers = []
-    for config_param in root.findall('subjects'):
-        for subject in config_param.findall('subject'): # access each subject
-            individual_semoffer = subject.findall('sem_offer')
-            for x in individual_semoffer:
-                parsed_semoffers.append(int(x.text))
-    return parsed_semoffers
+    parsedSemOffers = []
+    for parseArray in root.findall('subjects'):
+        for subject in parseArray.findall('subject'): # access each subject
+            individualSemOffer = subject.findall('sem_offer')
+            for x in individualSemOffer:
+                parsedSemOffers.append(int(x.text))
+    return parsedSemOffers
 
 def getting_prereqs_config_from_file(filename):
     tree = ET.parse(filename)
     root = tree.getroot()
-    parsed_prereqs = []
-    for config_param in root.findall('subjects'):
-        for subject in config_param.findall('subject'):
-            individual_parsed_prereq = subject.findall('pre_reqs')
-            individual_parsed_subject_id = subject.findall('id')
-            for x in individual_parsed_prereq:
+    parsedPreRqs = []
+    for parseArray in root.findall('subjects'):
+        for subject in parseArray.findall('subject'):
+            individualParsedPreReq = subject.findall('pre_reqs')
+            individualParsedSubjectId = subject.findall('id')
+            for x in individualParsedPreReq:
                     if x.text is not None:
                         #prereq to add is equal to pre_reqs tag's text inside the current subject being parsed
-                        parsed_prereqs.append(x.text)
-                        parsed_prereqs.append(individual_parsed_subject_id[0].text)
-    return parsed_prereqs
+                        parsedPreRqs.append(x.text)
+                        parsedPreRqs.append(individualParsedSubjectId[0].text)
+    return parsedPreRqs
 
 def getting_prereq_report_from_file(filename):
     tree = ET.parse(filename)
     root = tree.getroot()
-    parsed_anos_inicio = []
-    report_prereqs = []
-    for config_param in root.findall('subjects'):
-        for subject in config_param.findall('subject'):
+    allStartingYears = []
+    reportPrereqs = []
+    for parseArray in root.findall('subjects'):
+        for subject in parseArray.findall('subject'):
 
-            individual_parsed_ano_inicio = subject.findall('ano_inicio')
-            individual_parsed_ano_fim = subject.findall('ano_fim')
-            individual_parsed_subject_id = subject.findall('id')
-            individual_parsed_tipo_nivel_ativ_mae = subject.findall('tipo_nivel_atividade_mae')
-            individual_parsed_prerequinho = subject.findall('pre_reqs')
-            individual_parsed_cadeia_prereqs = subject.findall('no_cadeia_pre_requisito')
-            individual_parsed_tipo_prereq = subject.findall('tipo_pre_requisito')
-            individual_parsed_tipo_nivel_atividade_exigida = subject.findall('tipo_nivel_atividade_exigida')
-            for (x,y,z,w,v, u) in zip(individual_parsed_prerequinho, individual_parsed_ano_inicio, individual_parsed_ano_fim, individual_parsed_cadeia_prereqs, individual_parsed_tipo_prereq, individual_parsed_tipo_nivel_atividade_exigida):
+            individualParsedInitialYear = subject.findall('ano_inicio')
+            individualParsedFinalYear = subject.findall('ano_fim')
+            individualParsedSubjectId = subject.findall('id')
+            individualParsedStartingYear = subject.findall('tipo_nivel_atividade_mae')
+            individualParsedPreRqs = subject.findall('pre_reqs')
+            individualParsedPreqrsGroup = subject.findall('no_cadeia_pre_requisito')
+            individualParsedPreqrsType = subject.findall('tipo_pre_requisito')
+            individualParsedActivityType = subject.findall('tipo_nivel_atividade_exigida')
+            for (x,y,z,w,v, u) in zip(individualParsedPreRqs, individualParsedInitialYear, individualParsedFinalYear, individualParsedPreqrsGroup, individualParsedPreqrsType, individualParsedActivityType):
                     if x.text is not None:
-                        parsed_anos_inicio = []
-                        parsed_anos_inicio.append(individual_parsed_tipo_nivel_ativ_mae[0].text)
-                        parsed_anos_inicio.append(individual_parsed_subject_id[0].text)
-                        parsed_anos_inicio.append(y.text)
+                        allStartingYears = []
+                        allStartingYears.append(individualParsedStartingYear[0].text)
+                        allStartingYears.append(individualParsedSubjectId[0].text)
+                        allStartingYears.append(y.text)
                         if z.text == '0':
-                            parsed_anos_inicio.append('')
+                            allStartingYears.append('')
                         else:
-                            parsed_anos_inicio.append(z.text)
-                        parsed_anos_inicio.append(w.text)
-                        parsed_anos_inicio.append(v.text)
-                        parsed_anos_inicio.append(x.text)
-                        parsed_anos_inicio.append(u.text)
-                        report_prereqs.append(parsed_anos_inicio)
-    return report_prereqs
+                            allStartingYears.append(z.text)
+                        allStartingYears.append(w.text)
+                        allStartingYears.append(v.text)
+                        allStartingYears.append(x.text)
+                        allStartingYears.append(u.text)
+                        reportPrereqs.append(allStartingYears)
+    return reportPrereqs
 
 
 def getting_hard_pass_from_file(filename):
     tree = ET.parse(filename)
     root = tree.getroot()
     parsed_hard_pass = []
-    for config_param in root.findall('subj_dificulty'):
-        for hp in config_param.findall('hard_pass'):
+    for parseArray in root.findall('subj_dificulty'):
+        for hp in parseArray.findall('hard_pass'):
             individual_hp = hp.findall('sub_id')
             for x in individual_hp:
                     if x.text is not None:
@@ -406,8 +405,8 @@ def getting_easy_pass_from_file(filename):
     tree = ET.parse(filename)
     root = tree.getroot()
     parsed_easy_pass = []
-    for config_param in root.findall('subj_dificulty'):
-        for hp in config_param.findall('easy_pass'):
+    for parseArray in root.findall('subj_dificulty'):
+        for hp in parseArray.findall('easy_pass'):
             individual_ep = hp.findall('sub_id')
             for x in individual_ep:
                     if x.text is not None:
@@ -417,38 +416,38 @@ def getting_easy_pass_from_file(filename):
 def getting_params_config_from_file(filename):
     tree = ET.parse(filename)
     root = tree.getroot()
-    parsed_params = []
-    for config_param in root.findall('parameters'):
-        for parameter in config_param.findall('parameter'):
-            individual_parameter_name = parameter.findall('parameter_name')
-            parsed_params.append(individual_parameter_name[0].text)
-            individual_parameter_min_grade = parameter.findall('min_grade')
-            parsed_params.append(float(individual_parameter_min_grade[0].text))
-            individual_parameter_max_grade = parameter.findall('max_grade')
-            parsed_params.append(float(individual_parameter_max_grade[0].text))
-            individual_parameter_qtde_alunos = parameter.findall('qtde')
-            parsed_params.append(int(individual_parameter_qtde_alunos[0].text))
-    return parsed_params
+    parsedParams = []
+    for parseArray in root.findall('parameters'):
+        for parameter in parseArray.findall('parameter'):
+            individualParameterName = parameter.findall('parameter_name')
+            parsedParams.append(individualParameterName[0].text)
+            individualParameterMinGrade = parameter.findall('min_grade')
+            parsedParams.append(float(individualParameterMinGrade[0].text))
+            individualParameterMaxGrade = parameter.findall('max_grade')
+            parsedParams.append(float(individualParameterMaxGrade[0].text))
+            individualParameterStdAmount = parameter.findall('qtde')
+            parsedParams.append(int(individualParameterStdAmount[0].text))
+    return parsedParams
 
 def getting_factors_config_from_file(filename):
     tree = ET.parse(filename)
     root = tree.getroot()
-    parsed_factors = []
-    for config_factor in root.findall('factors'):
-        easy_pass_factor = config_factor.findall('easy_pass_factor')
-        parsed_factors.append(float(easy_pass_factor[0].text))
-        hard_pass_factor = config_factor.findall('hard_pass_factor')
-        parsed_factors.append(float(hard_pass_factor[0].text))
-    return parsed_factors
+    parsedFactors = []
+    for configFactor in root.findall('factors'):
+        easyPassFactor = configFactor.findall('easy_pass_factor')
+        parsedFactors.append(float(easyPassFactor[0].text))
+        hardPassFactor = configFactor.findall('hard_pass_factor')
+        parsedFactors.append(float(hardPassFactor[0].text))
+    return parsedFactors
 
 def getting_generic_info_from_file(filename):
         tree = ET.parse(filename)
         root = tree.getroot()
-        parsed_info = []
+        parsedInfo = []
         for generic_info in root.findall('generic_info'):
-            ano_ingresso = generic_info.findall('ano_ingresso')
-            parsed_info.append(int(ano_ingresso[0].text))
-        return parsed_info
+            enrollmentYear = generic_info.findall('ano_ingresso')
+            parsedInfo.append(int(enrollmentYear[0].text))
+        return parsedInfo
 
 def listar_disciplinas():
     print("Disciplinas cadastradas:\n")
@@ -464,103 +463,101 @@ def ask_for_input_to_Continue():
         pass
     return
 
-def get_students_records(students_data, startingYear):
+def get_students_records(studentsData, startingYear):
     #EXPORT STUDENTS RECORDS
-    all_records = []
-    individual_grade_on_record = []
+    allRecords = []
+    individualGradeOnRecord = []
     j = 0
-    while(j< len(students_data)):
+    while(j< len(studentsData)):
       m = 2
-      while(m<len(students_data[j])):
-        individual_grade_on_record = []
-        individual_grade_on_record.append(students_data[j][0]) #0
-        individual_grade_on_record.append(int(startingYear[0]+(students_data[j][m+3]/2))) #1
-        individual_grade_on_record.append(students_data[j][m+3])#2
-        individual_grade_on_record.append(students_data[j][m])#3
-        individual_grade_on_record.append(students_data[j][m+1])#4
-        individual_grade_on_record.append(students_data[j][m+2])#5
-        if students_data[j][m+1] >= 5 and students_data[j][m+2] >= 75:
-            individual_grade_on_record.append(4)#6
-        if students_data[j][m+1] < 5 and students_data[j][m+2] >= 75:
-            individual_grade_on_record.append(5)#6
-        if students_data[j][m+2] < 75:
-            individual_grade_on_record.append(6)#6
-        if individual_grade_on_record[6] == 4:
-            individual_grade_on_record.append("APROVADO POR NOTA/CONCEITO E FREQ")
-        if individual_grade_on_record[6] == 5:
-            individual_grade_on_record.append("REPROVADO POR NOTA/CONCEITO")
-        if individual_grade_on_record[6] == 6:
-            individual_grade_on_record.append("REPROVADO POR FREQUENCIA")
-        individual_grade_on_record.append(1)
-        individual_grade_on_record.append(students_data[j][m+4])
-        individual_grade_on_record.append('REGULAR')
-        all_records.append(individual_grade_on_record)
+      while(m<len(studentsData[j])):
+        individualGradeOnRecord = []
+        individualGradeOnRecord.append(studentsData[j][0]) #0
+        individualGradeOnRecord.append(int(startingYear[0]+(studentsData[j][m+3]/2))) #1
+        individualGradeOnRecord.append(studentsData[j][m+3])#2
+        individualGradeOnRecord.append(studentsData[j][m])#3
+        individualGradeOnRecord.append(studentsData[j][m+1])#4
+        individualGradeOnRecord.append(studentsData[j][m+2])#5
+        if studentsData[j][m+1] >= 5 and studentsData[j][m+2] >= 75:
+            individualGradeOnRecord.append(4)#6
+        if studentsData[j][m+1] < 5 and studentsData[j][m+2] >= 75:
+            individualGradeOnRecord.append(5)#6
+        if studentsData[j][m+2] < 75:
+            individualGradeOnRecord.append(6)#6
+        if individualGradeOnRecord[6] == 4:
+            individualGradeOnRecord.append("APROVADO POR NOTA/CONCEITO E FREQ")
+        if individualGradeOnRecord[6] == 5:
+            individualGradeOnRecord.append("REPROVADO POR NOTA/CONCEITO")
+        if individualGradeOnRecord[6] == 6:
+            individualGradeOnRecord.append("REPROVADO POR FREQUENCIA")
+        individualGradeOnRecord.append(1)
+        individualGradeOnRecord.append(studentsData[j][m+4])
+        individualGradeOnRecord.append('REGULAR')
+        allRecords.append(individualGradeOnRecord)
         m = m+5
       j = j+1
-    return all_records
+    return allRecords
 
-def calc_std_crs(std_data):
+def calc_std_crs(stdData):
     l = 0
-    std_total_credits = 0
-    std_total_grades = 0
+    studentTotalCredits = 0
+    studentTotalGrades = 0
     nici = 0
-    contador = 0
-    std_crs = []
-    pure_crs = [] #only crs in order to calc class standard deviation
-    while(l<len(std_data)):
+    counter = 0
+    studentsCrs = []
+    pureCrs = [] #only crs in order to calc class standard deviation
+    while(l<len(stdData)):
         c = 2
-        while(c<len(std_data[l])):
+        while(c<len(stdData[l])):
             individual_nici = 0
-            std_total_credits = std_total_credits + std_data[l][c+4]
-            std_total_grades = std_total_grades + std_data[l][c+1]
-            individual_nici = std_data[l][c+1] * std_data[l][c+4]
-            contador = contador + 1
+            studentTotalCredits = studentTotalCredits + stdData[l][c+4]
+            studentTotalGrades = studentTotalGrades + stdData[l][c+1]
+            individual_nici = stdData[l][c+1] * stdData[l][c+4]
+            counter = counter + 1
             nici = nici + individual_nici
             c = c+5
 
-        cr = round(nici/(10*std_total_credits),3)
-        std_crs.append(std_data[l][0])
-        std_crs.append(cr)
-        pure_crs.append(cr)
+        cr = round(nici/(10*studentTotalCredits),3)
+        studentsCrs.append(stdData[l][0])
+        studentsCrs.append(cr)
+        pureCrs.append(cr)
         l = l+1
 
 
-    to_rank = std_crs
+    toRank = studentsCrs
     positions = []
     counter = 1
-    while (len(to_rank)>1):
+    while (len(toRank)>1):
         c = 1
-        stored_highest_value = -1
-        stored_highest_index = -1
-        while (c<len(to_rank)):
-            if stored_highest_value < to_rank[c]:
-                stored_highest_value = to_rank[c]
-                stored_highest_index = c
+        storedHighestValue = -1
+        storedHighestIndex = -1
+        while (c<len(toRank)):
+            if storedHighestValue < toRank[c]:
+                storedHighestValue = toRank[c]
+                storedHighestIndex = c
             c = c +2
         positions.append(counter)
-        positions.append(std_crs[stored_highest_index-1])
-        positions.append(stored_highest_value)
-        to_rank.pop(stored_highest_index)
-        to_rank.pop(stored_highest_index-1)
+        positions.append(studentsCrs[storedHighestIndex-1])
+        positions.append(storedHighestValue)
+        toRank.pop(storedHighestIndex)
+        toRank.pop(storedHighestIndex-1)
         counter = counter+1
 
 #average class cr
     m = 2
-    crs_sum = 0
+    crsSum = 0
     instances = 0
     while(m<len(positions)):
-        crs_sum = crs_sum+positions[m]
+        crsSum = crsSum+positions[m]
         instances = instances+1
         m = m+3
 
-    med_crs = crs_sum/instances
+    medCrs = crsSum/instances
 
-    desv_padrao = np.std(pure_crs)
-    desv_padrao = desv_padrao
-    print("positions")
-    print(positions)
-    return positions, med_crs, desv_padrao
-    #crs, med_crs, desv_padrao = calc_std_crs(students_data)
+    standardDeviation = np.std(pureCrs)
+    standardDeviation = standardDeviation
+    return positions, medCrs, standardDeviation
+    #crs, medCrs, standardDeviation = calc_std_crs(studentsData)
 
 
 #counters and variable for grades creation
@@ -571,147 +568,147 @@ grade = []
 
 #cut is the min grade to be aproved
 cut = 5
-even_semester = []
-odd_semester = []
+evenSemester = []
+oddSemester = []
 
-def check_for_prereq(subject_to_check, prereqs_list):
-    cont1 = 0
-    prereqs_for_subject = []
-    while (cont1 < len(prereqs_list)):
-        if prereqs_list[cont1] == subject_to_check and cont1 % 2 != 0:
-            prereqs_for_subject.append(prereqs_list[cont1 - 1])
-        cont1 = cont1 + 1
-    return prereqs_for_subject
+def check_for_prereq(subjectToCheck, prereqsList):
+    counter = 0
+    subjectPrereqs = []
+    while (counter < len(prereqsList)):
+        if prereqsList[counter] == subjectToCheck and counter % 2 != 0:
+            subjectPrereqs.append(prereqsList[counter - 1])
+        counter = counter + 1
+    return subjectPrereqs
 
-def arrange_semesters(subjects, semoffers, even_semester, odd_semester):
+def arrange_semesters(subjects, semoffers, evenSemester, oddSemester):
     i = 0
     j = 0
-    even_semester.clear()
-    odd_semester.clear()
+    evenSemester.clear()
+    oddSemester.clear()
     for i, j in zip(semoffers, subjects):
         if i % 2 == 0:
-            even_semester.append(j)
+            evenSemester.append(j)
         if i % 2 != 0:
-            odd_semester.append(j)
+            oddSemester.append(j)
     return
 
 
 def sort_turmas(subjects, turmas):
     sub = 0
     run_turma = 0
-    subs_with_turmas = []
-    subs_with_turmas.clear()
+    subjectsAndClasses = []
+    subjectsAndClasses.clear()
     while (sub < len(subjects)):
-        subs_with_turmas.append('Turma')
-        subs_with_turmas.append(subjects[sub])
-        subs_with_turmas.append('Freq')
+        subjectsAndClasses.append('Turma')
+        subjectsAndClasses.append(subjects[sub])
+        subjectsAndClasses.append('Freq')
         sub = sub +1
-    return subs_with_turmas
+    return subjectsAndClasses
 
-def check_prereqs_are_ok(disciplinas, alreadyPassedSubjects): #if 1 ok if 0 not ok
+def check_prereqs_are_ok(subj, alreadyPassedSubjects): #if 1 ok if 0 not ok
     counter = 0
-    ok_or_not = 1
-    while(counter<len(disciplinas)):
-        if disciplinas[counter] not in alreadyPassedSubjects:
-            ok_or_not = 0
-    return ok_or_not
+    okOrNot = 1
+    while(counter<len(subj)):
+        if subj[counter] not in alreadyPassedSubjects:
+            okOrNot = 0
+    return okOrNot
 
-def sort_sab_rec(students, maxCompletionTime, sab_rec_factors):
-    qtty_students_to_be_affected = int(np.ceil(len(students)*sab_rec_factors[0]))
+def sort_sab_rec(students, maxCompletionTime, sabRecFactors):
+    qttyStudentsToAffect = int(np.ceil(len(students)*sabRecFactors[0]))
     counter = 0
-    sab_rec = []
-    students_to_be_affected = random.sample(students, qtty_students_to_be_affected)
-    while (counter < len(students_to_be_affected)):
-        positive_negative_sort = random.randint(0,1)
-        initial_semester = random.randint(1,maxCompletionTime) #considering everyone is fine in first semester
-        will_return_to_initial_state = random.randint(0,5) #0,1 wont go back, if > 1 then will go back to normal grades
-        if will_return_to_initial_state <=1:
-            final_semester = maxCompletionTime
+    sabotageAndRecuperations = []
+    studentsToBeAffected = random.sample(students, qttyStudentsToAffect)
+    while (counter < len(studentsToBeAffected)):
+        rafflePositiveNegative = random.randint(0,1)
+        initialSemester = random.randint(1,maxCompletionTime) #considering everyone is fine in first semester
+        willReturnToInitialState = random.randint(0,5) #0,1 wont go back, if > 1 then will go back to normal grades
+        if willReturnToInitialState <=1:
+            finalSemester = maxCompletionTime
         else:
-            final_semester = initial_semester + random.randint(0,maxCompletionTime-initial_semester)
+            finalSemester = initialSemester + random.randint(0,maxCompletionTime-initialSemester)
 
-        sab_rec.append(students_to_be_affected[counter])
-        sab_rec.append(initial_semester)
-        sab_rec.append(final_semester)
-        sab_rec.append(positive_negative_sort)
+        sabotageAndRecuperations.append(studentsToBeAffected[counter])
+        sabotageAndRecuperations.append(initialSemester)
+        sabotageAndRecuperations.append(finalSemester)
+        sabotageAndRecuperations.append(rafflePositiveNegative)
 
         counter = counter+1
 
-    return sab_rec # = [sorted_student, initial_semester, final_semester, impact (0 for negative, 1 for positive)]
+    return sabotageAndRecuperations # = [sorted_student, initialSemester, finalSemester, impact (0 for negative, 1 for positive)]
 
-def get_report_sab_rec(sab_rec):
-    student_qtty = len(sab_rec)/4
+def get_report_sab_rec(sabotageAndRecuperations):
+    amountOfStudents = len(sabotageAndRecuperations)/4
     counter = 3
-    positive_qtty = 0
-    negative_qtty = 0
-    sab_rec_report = []
-    while (counter < len(sab_rec)):
-        if sab_rec[counter] == 0:
-            negative_qtty = negative_qtty + 1
-        if sab_rec[counter] == 1:
-            positive_qtty = positive_qtty + 1
+    positiveQty = 0
+    negativeQty = 0
+    reportSabRec = []
+    while (counter < len(sabotageAndRecuperations)):
+        if sabotageAndRecuperations[counter] == 0:
+            negativeQty = negativeQty + 1
+        if sabotageAndRecuperations[counter] == 1:
+            positiveQty = positiveQty + 1
         counter = counter + 4
-    sab_rec_report.append(student_qtty)
-    sab_rec_report.append(negative_qtty)
-    sab_rec_report.append(positive_qtty)
-    return sab_rec_report
+    reportSabRec.append(amountOfStudents)
+    reportSabRec.append(negativeQty)
+    reportSabRec.append(positiveQty)
+    return reportSabRec
 
 
 def new_simulation(params, factors, hardPasses, easyPasses, startingYear, subjects, turmas, prereqs, semoffers, credits, cat_info, prereqReport, gradeSabRecFactors, frequencySabRecFactors, factorsEasyHard):
 
     #ja_simulou = 1
-    arrange_semesters(subjects, semoffers, even_semester, odd_semester)
-    max_years = 6
+    arrange_semesters(subjects, semoffers, evenSemester, oddSemester)
+    yearsLimit = 6
 #interperse semesters to create an offer grid
-    all_subs = []
-    all_subs.clear()
+    allSubjects = []
+    allSubjects.clear()
     i = 0
     while (i < 6):
-        for odd_sem in odd_semester:
-            all_subs.append(odd_sem)
-        for even_sem in even_semester:
-            all_subs.append(even_sem)
+        for oddSem in oddSemester:
+            allSubjects.append(oddSem)
+        for evenSem in evenSemester:
+            allSubjects.append(evenSem)
         i = i+1
-    #print(all_subs)
+    #print(allSubjects)
     subjectsAsHeader = []
     subjectsAsHeader.clear()
-    subjectsAsHeader = sort_turmas(all_subs, turmas)
+    subjectsAsHeader = sort_turmas(allSubjects, turmas)
 
 
 
     grade.clear()
     students.clear()
-    params_sort = [x for x in params if not isinstance(x, str)] #returns params as [param1_min_grade, param1_max_grade, param1_qty_students, param2min_grade,....]
+    paramsSort = [x for x in params if not isinstance(x, str)] #returns params as [param1_min_grade, param1_max_grade, param1_qty_students, param2min_grade,....]
 
 
 
-    #st_total will count how many students should be created for each parameter based on configs
-    st_total = 0
+    #studentsTotal will count how many students should be created for each parameter based on configs
+    studentsTotal = 0
     counterX = 3
     while(counterX < len(params)):
         total = params[counterX]
-        st_total = st_total + total
+        studentsTotal = studentsTotal + total
         counterX = counterX + 4
     #creating students and grades
 #counter for students ids creation
     i = 0
     j = 2
 
-    while(i < st_total):
+    while(i < studentsTotal):
         newstudent = random.randint(100000,199999)
         #excluding duplicates
         if newstudent not in students:
             students.append(newstudent)
             i = i+1
     #now grades
-    while(j<len(params_sort)):
+    while(j<len(paramsSort)):
         a = 0
-        while(a < params_sort[j]):
+        while(a < paramsSort[j]):
             b = 0
             newgradeline = []
             grade.append(newgradeline)
             while(b < len(subjectsAsHeader)):
-                #gen_grade = round(random.uniform(params_sort[j-2],params_sort[j-1]),2)
+                #gen_grade = round(random.uniform(paramsSort[j-2],paramsSort[j-1]),2)
                 gen_grade = -1
                 newgradeline.append(gen_grade)
                 b = b +1
@@ -720,11 +717,11 @@ def new_simulation(params, factors, hardPasses, easyPasses, startingYear, subjec
 
     ##this code snippet creates an array [subj, credits] that will be used to compose "pending" array
     m = 0
-    subj_credits = []
-    subj_credits.clear()
+    subjectCredits = []
+    subjectCredits.clear()
     while(m<len(subjects)):
-        subj_credits.append(subjects[m])
-        subj_credits.append(credits[m])
+        subjectCredits.append(subjects[m])
+        subjectCredits.append(credits[m])
         m = m+1
 
 
@@ -735,7 +732,7 @@ def new_simulation(params, factors, hardPasses, easyPasses, startingYear, subjec
         while (c < len(subjectsAsHeader)):
             if subjectsAsHeader[c] in subjects:
                 classInstance = subjects.index(subjectsAsHeader[c])
-                sorteio_de_turma = 0
+                classRaffle = 0
                 raffledClass = random.randint(0,turmas[classInstance]-1)
                 raffledClass = raffledClass + 65
                 grade[l][c-1] = chr(raffledClass)
@@ -748,8 +745,8 @@ def new_simulation(params, factors, hardPasses, easyPasses, startingYear, subjec
     #grades_to_handle = []
     alreadyPassedSubjects = []
     pendingSubjects = []
-    evenSemSubjAmount = len(even_semester)
-    oddSemSubjAmount = len(odd_semester)
+    evenSemSubjAmount = len(evenSemester)
+    oddSemSubjAmount = len(oddSemester)
     subjectAtributesQty = 8 #nome, turma, nota, creditos, semestre de oferta, liberado
     currentlyEnrolledCredits = 0
     currentSemester = []
@@ -757,7 +754,7 @@ def new_simulation(params, factors, hardPasses, easyPasses, startingYear, subjec
     line = []
     alldata = []
     parametersDistribuitionOverStdQty = []
-    all_grades = []
+    allGrades = []
 
 
     raffledStdd = random.randint(0, len(students)-1)
@@ -765,17 +762,17 @@ def new_simulation(params, factors, hardPasses, easyPasses, startingYear, subjec
     frequencyRaffleSabRec = sort_sab_rec(students, maxCompletionTime, frequencySabRecFactors)#0.3 aleatory, will be editable in flask interface
 
 
-    easyHardSubjects = sorteio_de_turmas_dificeis_e_faceis(subjects, maxCompletionTime, even_semester, odd_semester)
+    easyHardSubjects = sorteio_de_turmas_dificeis_e_faceis(subjects, maxCompletionTime, evenSemester, oddSemester)
 
     #distributing parameters according to amount of students
     #2 on parameter1 and 1 on parameter2 =
     # = [parameter1 min, parameter1 max, parameter1 min, parameter1 max, parameter2 min, parameter2 max]
     counterX = 2
-    while(counterX < len(params_sort)):
+    while(counterX < len(paramsSort)):
         counterY = 0
-        while(counterY<params_sort[counterX]):
-            parametersDistribuitionOverStdQty.append(params_sort[counterX-2])
-            parametersDistribuitionOverStdQty.append(params_sort[counterX-1])
+        while(counterY<paramsSort[counterX]):
+            parametersDistribuitionOverStdQty.append(paramsSort[counterX-2])
+            parametersDistribuitionOverStdQty.append(paramsSort[counterX-1])
             counterY = counterY + 1
         counterX = counterX + 3
 
@@ -802,9 +799,9 @@ def new_simulation(params, factors, hardPasses, easyPasses, startingYear, subjec
             pendingSubjects.append(subjectsAsHeader[c]) #name
             pendingSubjects.append(grade[l][c-1]) #class
             pendingSubjects.append(grade[l][c]) #grade
-            subjCredIndex = subj_credits.index(subjectsAsHeader[c])
-            pendingSubjects.append(subj_credits[subjCredIndex+1]) #credits
-            if subjectsAsHeader[c] in even_semester:
+            subjCredIndex = subjectCredits.index(subjectsAsHeader[c])
+            pendingSubjects.append(subjectCredits[subjCredIndex+1]) #credits
+            if subjectsAsHeader[c] in evenSemester:
                 pendingSubjects.append(2) #semester of offer, 1 odd, 2 even
             else:
                 pendingSubjects.append(1)
@@ -891,7 +888,7 @@ def new_simulation(params, factors, hardPasses, easyPasses, startingYear, subjec
                             else:
                                 currentSemester[subjCounter+2] = round(currentSemester[subjCounter+2] + random.uniform(1,gradeSabRecFactors[2]),2) #positive impact
 
-                    #frequency sabotage and recovery logic:
+                    #frequency sabotages and recovery logic:
                     if currentSemester[subjCounter+7] in frequencyRaffleSabRec:
                         raffledStudentIndex = frequencyRaffleSabRec.index(currentSemester[subjCounter+7])
                         if semCounter in range(frequencyRaffleSabRec[raffledStudentIndex+1], frequencyRaffleSabRec[raffledStudentIndex+2]+1):
@@ -916,63 +913,47 @@ def new_simulation(params, factors, hardPasses, easyPasses, startingYear, subjec
                         currentSemester[subjCounter+5] = 0
                 subjCounter = subjCounter + subjectAtributesQty
 
-
-            count_line = 0
-            while (count_line<len(currentSemester)):
-                line.append(currentSemester[count_line + 1])
-                alldata.append(currentSemester[count_line + 1])
-                line.append(currentSemester[count_line + 2])
-                alldata.append(currentSemester[count_line + 2])
-                line.append(currentSemester[count_line+6])
-                count_line = count_line + subjectAtributesQty
+            lineCounter = 0
+            while (lineCounter<len(currentSemester)):
+                line.append(currentSemester[lineCounter + 1])
+                alldata.append(currentSemester[lineCounter + 1])
+                line.append(currentSemester[lineCounter + 2])
+                alldata.append(currentSemester[lineCounter + 2])
+                line.append(currentSemester[lineCounter+6])
+                lineCounter = lineCounter + subjectAtributesQty
 
             semCounter = semCounter + 1
         ## get pendent array grades and return to regular grades array
         holder = 0
         while(holder<len(line)):
-            all_grades.append(line[holder])
+            allGrades.append(line[holder])
             holder = holder +1
         paramListCounter = paramListCounter+2
         l = l+1
-
-
     l = 0
 
     #removing -1 e classes that weren`t enrolled
     counterX = 1
-    while(counterX<len(all_grades)):
-        if all_grades[counterX] == -1:
-            all_grades[counterX] = '--'
-            all_grades[counterX-1] = '--'
+    while(counterX<len(allGrades)):
+        if allGrades[counterX] == -1:
+            allGrades[counterX] = '--'
+            allGrades[counterX-1] = '--'
         counterX = counterX + 1
 
 
     #going over all data
     position = 0
     lensub = len(subjectsAsHeader)
-    print("students")
-    print(students)
-
     while (l < len(students)):
-        grade[l] = all_grades[position:position+len(subjectsAsHeader)]
+        grade[l] = allGrades[position:position+len(subjectsAsHeader)]
         position = position + lensub
         l = l+1
-
     simulation = pd.DataFrame (scrambled(grade),index=students, columns=subjectsAsHeader)
-    #ja_simulou = 1
     simulationArray = simulation.values.tolist()
-    test = np.array(simulationArray)
-
-
     if len(simulation)>0:
-        studentDfForReport, students_data = export_student_data(students, maxCompletionTime, oddSemSubjAmount, evenSemSubjAmount, simulationArray, subjectsAsHeader, subjects,credits, startingYear, cat_info)
-        studentRecords = get_students_records(students_data, startingYear)
+        studentDfForReport, studentsData = export_student_data(students, maxCompletionTime, oddSemSubjAmount, evenSemSubjAmount, simulationArray, subjectsAsHeader, subjects,credits, startingYear, cat_info)
+        studentRecords = get_students_records(studentsData, startingYear)
         realFinalToolExport, subjectsFinalExport = exporting_to_tool(simulationArray, evenSemSubjAmount,oddSemSubjAmount, subjectsAsHeader)
-
-
-
-
-
 
     if os.path.exists("demofile.txt"):
         os.remove("demofile.txt")
@@ -1011,25 +992,23 @@ def new_simulation(params, factors, hardPasses, easyPasses, startingYear, subjec
                 impact = 'negativo.'
             f.write('\n-------------------\n- Disciplina: ' + str(easyHardSubjects[j])+';\n- Semestre sorteado: ' + str(easyHardSubjects[j+1]) + ';\n- Impacto: '+impact)
             j = j+3
-
-        grade_report_sab_rec = get_report_sab_rec(gradesRaffleSabRec)
-        frequency_report_sab_rec = get_report_sab_rec(frequencyRaffleSabRec)
+        gradeSabRecReport = get_report_sab_rec(gradesRaffleSabRec)
+        freqSabRecReport = get_report_sab_rec(frequencyRaffleSabRec)
         f.write('\n-------------------')
         f.write('\n-------------------------------------------------------------------')
         f.write('\nSabotagem e recuperação de notas: ')
-        f.write('\nQtde. de alunos: '+str(grade_report_sab_rec[0]))
-        f.write('\nQtde. alunos com impacto negativo: '+str(grade_report_sab_rec[1]))
+        f.write('\nQtde. de alunos: '+str(gradeSabRecReport[0]))
+        f.write('\nQtde. alunos com impacto negativo: '+str(gradeSabRecReport[1]))
         f.write('\nFator de impacto negativo: - 0 à '+str(gradeSabRecFactors[1]))
-        f.write('\nQtde. alunos com impacto positivo: '+str(grade_report_sab_rec[2]))
+        f.write('\nQtde. alunos com impacto positivo: '+str(gradeSabRecReport[2]))
         f.write('\nFator de impacto positivo: + 0 à '+str(gradeSabRecFactors[2]))
         f.write('\n-------------------------------------------------------------------')
         f.write('\nSabotagem e recuperação de frequência: ')
-        f.write('\nQtde. de alunos: '+str(frequency_report_sab_rec[0]))
-        f.write('\nQtde. alunos com impacto negativo: '+str(frequency_report_sab_rec[1]))
+        f.write('\nQtde. de alunos: '+str(freqSabRecReport[0]))
+        f.write('\nQtde. alunos com impacto negativo: '+str(freqSabRecReport[1]))
         f.write('\nFator de impacto negativo: - 0 à '+str(frequencySabRecFactors[1]))
-        f.write('\nQtde. alunos com impacto positivo: '+str(frequency_report_sab_rec[2]))
+        f.write('\nQtde. alunos com impacto positivo: '+str(freqSabRecReport[2]))
         f.write('\nFator de impacto positivo: + 0 à '+str(frequencySabRecFactors[2]))
-
         f.close()
 ######################
         try:
@@ -1040,9 +1019,7 @@ def new_simulation(params, factors, hardPasses, easyPasses, startingYear, subjec
         finally:
             f.close()
             simulation.to_csv(r'app/exports/curso.csv')
-
 ######################
-
         studentInfoToExport = pd.DataFrame (studentDfForReport,index=students, columns=['RA', 'ANOING', 'PINGR', 'DANOCAT', 'CURSO', 'ANO_INGRESSO', 'ANO_CATALOGO', 'CR', 'CP', 'CP_FUTURO', 'POSICAO_ALUNO_NA_TURMA', 'COEFICIENTE_RENDIMENTO_PADRAO', 'COEFICIENTE_RENDIMENTO_MEDIO', 'DESVIO_PADRAO_TURMA', 'TOTAL_ALUNOS_TURMA'])
         try:
             f = open("app/exports/info_std.csv")
@@ -1091,7 +1068,7 @@ def new_simulation(params, factors, hardPasses, easyPasses, startingYear, subjec
         barrosToolJson = barrosToolCsv.to_json(orient="split")
         parsed = json.loads(barrosToolJson)
 
-    return simulation, simulationArray, maxCompletionTime, oddSemSubjAmount, evenSemSubjAmount, subjectsAsHeader, students_data, writablePrereqReport, writableStudentRecords, studentInfoToExport, realFinalToolExport, students, subjectsFinalExport
+    return simulation, simulationArray, maxCompletionTime, oddSemSubjAmount, evenSemSubjAmount, subjectsAsHeader, studentsData, writablePrereqReport, writableStudentRecords, studentInfoToExport, realFinalToolExport, students, subjectsFinalExport
 
 ####running ,,
 
@@ -1119,7 +1096,6 @@ def allocate_temp_viz(visualizacao_df, students, subjectsFinalExport, startingYe
 
 def read_temp_viz(vizPathFile):
     tempViz = pd.read_csv('app/static/usr_viz/export_visualizacao.csv', index_col=False)
-
     barrosToolJson = tempViz.to_json(orient="split")
     tempVizJson = json.loads(barrosToolJson)
     return tempVizJson

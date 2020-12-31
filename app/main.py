@@ -54,20 +54,16 @@ def home():
         simulation_Enabled = check_for_current_Catalog_and_Config(session)
         if request.method == "POST":
             if "del_viz" in request.form:
-                print("teste")
                 viz_current = request.form["viz_current"]
-                print(viz_current)
                 session["current_viz"] = del_viz(session["user_id"], viz_current, session["current_viz"])
             if "set_viz" in request.form:
                 session["current_viz"] = request.form.get('viz_current')
                 file_path = get_Saved_viz_path(storage, session['current_viz'], session["user_id"])
                 session["viz_path_file"] = file_path
-                print(file_path)
                 timestamp = datetime.now().strftime("%d-%m_%I-%M-%S_%p")
                 return render_template("visualizacao.html", vizz_file = session["viz_path_file"], timestamp = timestamp)
         saved_viz_group = list_saved_viz(session["user_id"])
         #fator de sabotagem de notas
-        testeeeee = [0.5,-2,2]
         pct_g, sb_g, rc_g = generate_graphic_sab_rec_grade(session["grade_sab_rec_factors"])
         pct_f, sb_f, rc_f = generate_graphic_sab_rec_frequency(session["frequency_sab_rec_factors"])
         easy_impact, hard_impact = generate_graphic_easy_hard_subjects(session["factors"])
@@ -108,7 +104,6 @@ def login():
             app.secret_key = email['idToken']
             #session["user"] = email['localId']
             session["user_id"] = email['localId']
-            print(session["user_id"])
             if session.get('user_default_catalog') is None:
                 session["user_default_catalog"] = "not_set"
             if session.get('user_default_config') is None:
@@ -172,16 +167,15 @@ def importacoes():
                         catalogo = request.files['catalogo']
                         #catalogo.save('app/imports/uploads/catalogo.xml')
                         storage.child(user_uid+"/"+timestamp+"_catalogo.xml").put(catalogo)
-                        print(user_uid)
-                        print('importou')
+
                     except UnboundLocalError:
                         pass
                     try:
                         configs = request.files['configs']
                         #configs.save('app/imports/uploads/configs.xml')
-                        print(user_uid)
+
                         storage.child(user_uid+"/"+timestamp+"_configs.xml").put(configs)
-                        print('importou')
+
                         #current_config = storage.child(user_uid+"/configs.xml").download("usr/"+user_uid[-5:]+"/"+timestamp+"current_config.xml")
                         #current_catalogo = storage.child(user_uid+"/configs.xml").download("usr/"+user_uid[-5:]+"/"+user_uid[-5:]+"current_catalogo.xml")
                     except UnboundLocalError:
@@ -190,12 +184,10 @@ def importacoes():
                 if "set_catalogo" in request.form:
                     catalog_current = request.form["catalog_current"]
                     session["current_catalogo"] = catalog_current
-                    print(session["current_catalogo"])
                     session["subjects"], session["turmas"], session["prereqs"], session["semoffers"], session["credits"], session["cat_info"], session["prereq_report"] = set_catalogo_as_default(storage, user_uid, session["current_catalogo"])
                 if "set_config" in request.form:
                     config_current = request.form["config_current"]
                     session["current_config"] = config_current
-                    print(session["current_config"])
                     session["params"], session["factors"], session["hard_passes"], session["easy_passes"], session["generic_config_info"] = set_config_as_default(storage, user_uid, session["current_config"])
                 if "del_catalogo" in request.form:
                     catalog_current = request.form["catalog_current"]
@@ -252,7 +244,6 @@ def list_saved_viz(user_id):
         full_file_path = storage.child(file.name).get_url(None)
         if user_id in full_file_path:
             if "saved_viz" in full_file_path:
-                print(full_file_path)
                 viz_name = full_file_path[117:-10]
                 if viz_name not in all_imported_viz:
                     all_imported_viz.append(viz_name)
@@ -285,14 +276,10 @@ def visualizacao():
         if "save_viz" in request.form:
             timestamp = "vis_"+ datetime.now().strftime("%d-%m_%I-%M-%S_%p")
             filename = request.form.get('filename')
-            print(timestamp)
             save_viz(storage, session["user_id"], session["current_viz"], timestamp, filename)
-            print(filename)
-            print(session["current_viz"])
     else:
         filename = None
         timestamp = "vis_"+ datetime.now().strftime("%d-%m_%I-%M-%S_%p")
-    print(session["viz_path_file"])
     return render_template("visualizacao.html", vizz_file = session["viz_path_file"], vizz_test = vizz_test, timestamp = timestamp)
 
 @app.route('/disciplinas/', methods=['GET','POST'])
@@ -382,11 +369,9 @@ def parametros():
             if "get_params_info" in request.form:
                 selected_params = request.form.getlist('selected_params')
                 for selected_param in selected_params:
-                    print(selected_param)
                     single_param_dict = {}
                     single_param_dict = list_params_values(session["params"], selected_param)
                     params_dict[selected_param] = single_param_dict
-                    print(params_dict)
             if "edit_name" in request.form:
                 selected_param = request.form.get('param_to_edit')
                 new_value = request.form.get('new_param_value')
@@ -402,7 +387,6 @@ def parametros():
                 try:
                     selected_param = request.form.get('param_to_edit')
                     new_value = request.form.get('new_param_value')
-                    print(selected_param)
                     params = change_parameter_max(session["params"], selected_param, new_value)
                 except ValueError:
                     pass
@@ -454,7 +438,6 @@ def configuracoes_adicionais():
                     session["factors"].clear()
                 session["factors"].append(float(min_value))
                 session["factors"].append(float(max_value))
-                print(session["factors"])
             if "set_sab_rec_grade" in request.form:
                 positive_impact = request.form.get('positive_impact')
                 negative_impact = request.form.get('negative_impact')
@@ -481,12 +464,10 @@ def configuracoes_adicionais():
                 session["easy_hard_factors"].append(float(negative_impact))
                 session["easy_hard_factors"].append(float(positive_impact))
             if "remove_hard_pass" in request.form:
-                print("entrei")
                 hard_passes_to_remove = request.form.getlist('hp_rmv')
                 for hard_pass in hard_passes_to_remove:
                     session["hard_passes"] = [x for x in session["hard_passes"] if x != hard_pass]
             if "remove_easy_pass" in request.form:
-                print("entrei")
                 easy_passes_to_remove = request.form.getlist('ep_rmv')
                 for easy_pass in easy_passes_to_remove:
                     session["easy_passes"] = [x for x in session["easy_passes"] if x != easy_pass]
@@ -517,16 +498,15 @@ def simulacao():
     #         return redirect(url_for("user"))
     #     global simulation_lock
         #delete all temp viz before simulation
-        simulation, simulation_array, tempo_max_integralizacao, qtde_de_disciplinas_semestre_impar, qtde_de_disciplinas_semestre_par, subss, students_data, prereqs_report_export, std_records, std_info_export, testeee, students, subs_final_export = new_simulation(session["params"], session["factors"], session["hard_passes"], session["easy_passes"], session["generic_config_info"], session["subjects"], session["turmas"], session["prereqs"], session["semoffers"], session["credits"], session["cat_info"], session["prereq_report"], session["grade_sab_rec_factors"], session["frequency_sab_rec_factors"], session["easy_hard_factors"])
+        simulation, simulation_array, tempo_max_integralizacao, qtde_de_disciplinas_semestre_impar, qtde_de_disciplinas_semestre_par, subss, students_data, prereqs_report_export, std_records, std_info_export, toolExport, students, subs_final_export = new_simulation(session["params"], session["factors"], session["hard_passes"], session["easy_passes"], session["generic_config_info"], session["subjects"], session["turmas"], session["prereqs"], session["semoffers"], session["credits"], session["cat_info"], session["prereq_report"], session["grade_sab_rec_factors"], session["frequency_sab_rec_factors"], session["easy_hard_factors"])
         timestamp = datetime.now().strftime("%d-%m_%I-%M-%S_%p")
-        session["viz_path_file"], session["current_viz"] = allocate_temp_viz(testeee,students, subs_final_export, session["generic_config_info"], storage, timestamp, session["user_id"])
-        print(session["viz_path_file"])
+        session["viz_path_file"], session["current_viz"] = allocate_temp_viz(toolExport,students, subs_final_export, session["generic_config_info"], storage, timestamp, session["user_id"])
 
         #with open("app/imports/log.txt", "r") as f:
             #content = f.read()
         a_file = open("app/imports/log.txt", "r")
         lines = a_file.readlines()
-        return render_template('simulacao.html', simulation_Enabled = simulation_Enabled, simulation_table=[simulation.to_html(classes='table table-striped table-sm', header="false",justify="left", border="0")], prereqs_table=[prereqs_report_export.to_html(classes='table table-striped table-sm', header="false",justify="left", border="0", index=False)],std_records_table=[std_records.to_html(classes='table table-striped table-sm', header="false",justify="left", border="0", index=False)],std_info_table=[std_info_export.to_html(classes='table table-striped table-sm', header="false",justify="left", border="0", index=False)],params = session["subjects"],  lines = lines, user_default_catalog = session["user_default_catalog"], user_default_config = session["user_default_config"], testeee = testeee)
+        return render_template('simulacao.html', simulation_Enabled = simulation_Enabled, simulation_table=[simulation.to_html(classes='table table-striped table-sm', header="false",justify="left", border="0")], prereqs_table=[prereqs_report_export.to_html(classes='table table-striped table-sm', header="false",justify="left", border="0", index=False)],std_records_table=[std_records.to_html(classes='table table-striped table-sm', header="false",justify="left", border="0", index=False)],std_info_table=[std_info_export.to_html(classes='table table-striped table-sm', header="false",justify="left", border="0", index=False)],params = session["subjects"],  lines = lines, user_default_catalog = session["user_default_catalog"], user_default_config = session["user_default_config"], toolExport = toolExport)
     else:
         return redirect(url_for("login"))
 

@@ -39,8 +39,6 @@ def save_viz(storage, user_uid, file_name, timestamp, filename):
     viz_path_file = temp_dir.name+"/"+"temp_viz.csv"
     full_file_path = file_name
     full_file_path = full_file_path.replace('%2F','/')
-    print(viz_path_file)
-    print(full_file_path)
     current_viz = storage.child(full_file_path).download(viz_path_file)
     if filename is not None:
         target_path = user_uid+"/saved_viz/"+filename+".csv"
@@ -57,8 +55,6 @@ def set_catalogo_as_default(storage, user_uid, file_name):
     catalog_path_file = temp_dir.name+"/"+"default_catalog.xml"
     full_file_path = user_uid+"/"+file_name
     full_file_path = full_file_path.replace('%2F','/')
-    print(catalog_path_file)
-    print(full_file_path)
     current_config = storage.child(full_file_path).download(catalog_path_file)
     filename=current_config
 
@@ -75,7 +71,6 @@ def set_catalogo_as_default(storage, user_uid, file_name):
             f.close()
             temp_dir.cleanup()
             importou_config = 1
-            print(subjects)
         except SyntaxError:
             print("\nProblema identificado ao importar. Verifique seu arquivo "+filename+".")
             pass
@@ -92,8 +87,6 @@ def set_config_as_default(storage, user_uid, file_name):
     config_path_file = temp_dir.name+"/"+"default_config.xml"
     full_file_path = user_uid+"/"+file_name
     full_file_path = full_file_path.replace('%2F','/')
-    print(config_path_file)
-    print(full_file_path)
     current_config = storage.child(full_file_path).download(config_path_file)
     filename=current_config
 
@@ -108,7 +101,6 @@ def set_config_as_default(storage, user_uid, file_name):
             f.close()
             temp_dir.cleanup()
             importou_config = 1
-            print(params)
         except SyntaxError:
             print("\nProblema identificado ao importar. Verifique seu arquivo "+filename+".")
             pass
