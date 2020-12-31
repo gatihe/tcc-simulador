@@ -10,9 +10,13 @@ Esses conjuntos devem ter características programáveis, como por exemplo padr�
 #### Requisitos:
 - [Python 3.x](https://www.python.org/download/releases/3.0/)
 - [Pandas](https://pandas.pydata.org/)
+- [Lista completa](https://github.com/gatihe/tcc-simulador/blob/master/requirements.txt)
 #### Instruções:
 - Faça o download e extração do repositório;
-- Na raiz do diretório extraído, execute o arquivo `simulador.py`;
+- Altere o arquivo pyrebase_config.py com as suas credenciais.
+- Execute `pip install -r requirements.txt` no terminal;
+- Execute `gsutil cors set cors.json gs://<your-cloud-storage-bucket>` no terminal
+- Na raiz do diretório extraído, execute o arquivo `wsgi.py`;
 - Importe um catálogo e, se necessário, configurações adicionais;
 - Faça uma simulaçao;
 - Exporte os relatórios.
