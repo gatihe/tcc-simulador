@@ -21,6 +21,7 @@ Esses conjuntos devem ter características programáveis, como por exemplo padr�
 - Faça uma simulaçao;
 - Exporte os relatórios.
 ---
+### Manual do usuário:
 #### Catálogos (.xml):
 
 Entre as configurações que dão suporte à simulação de dados educacionais estão os catálogos de curso. Este arquivo tem como utilidade especificar as características do curso à ser simulado. Devem ser inseridos em `imports/catalogos/`. Um catálogo deve contar com a seguinte estrutura:
