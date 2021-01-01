@@ -366,7 +366,7 @@ def getting_prereq_report_from_file(filename):
             individualParsedInitialYear = subject.findall('ano_inicio')
             individualParsedFinalYear = subject.findall('ano_fim')
             individualParsedSubjectId = subject.findall('id')
-            individualParsedStartingYear = subject.findall('tipo_nivel_atividade_mae')
+            individualCourseType = subject.findall('tipo_de_curso')
             individualParsedPreRqs = subject.findall('pre_reqs')
             individualParsedPreqrsGroup = subject.findall('no_cadeia_pre_requisito')
             individualParsedPreqrsType = subject.findall('tipo_pre_requisito')
@@ -374,7 +374,7 @@ def getting_prereq_report_from_file(filename):
             for (x,y,z,w,v, u) in zip(individualParsedPreRqs, individualParsedInitialYear, individualParsedFinalYear, individualParsedPreqrsGroup, individualParsedPreqrsType, individualParsedActivityType):
                     if x.text is not None:
                         allStartingYears = []
-                        allStartingYears.append(individualParsedStartingYear[0].text)
+                        allStartingYears.append(individualCourseType[0].text)
                         allStartingYears.append(individualParsedSubjectId[0].text)
                         allStartingYears.append(y.text)
                         if z.text == '0':
@@ -654,7 +654,7 @@ def get_report_sab_rec(sabotageAndRecuperations):
     return reportSabRec
 
 
-def new_simulation(params, factors, hardPasses, easyPasses, startingYear, subjects, turmas, prereqs, semoffers, credits, cat_info, prereqReport, gradeSabRecFactors, frequencySabRecFactors, factorsEasyHard):
+def new_simulation(params, factors, hardPasses, easyPasses, startingYear, subjects, classes, prereqs, semoffers, credits, cat_info, prereqReport, gradeSabRecFactors, frequencySabRecFactors, factorsEasyHard):
 
     #ja_simulou = 1
     arrange_semesters(subjects, semoffers, evenSemester, oddSemester)
@@ -672,7 +672,7 @@ def new_simulation(params, factors, hardPasses, easyPasses, startingYear, subjec
     #print(allSubjects)
     subjectsAsHeader = []
     subjectsAsHeader.clear()
-    subjectsAsHeader = sort_turmas(allSubjects, turmas)
+    subjectsAsHeader = sort_turmas(allSubjects, classes)
 
 
 
@@ -725,7 +725,7 @@ def new_simulation(params, factors, hardPasses, easyPasses, startingYear, subjec
         m = m+1
 
 
-#emptying values and sorting classes (turmas)
+#emptying values and sorting classes (classes)
     l = 0
     while(l < len(students)):
         c = 0
@@ -733,7 +733,7 @@ def new_simulation(params, factors, hardPasses, easyPasses, startingYear, subjec
             if subjectsAsHeader[c] in subjects:
                 classInstance = subjects.index(subjectsAsHeader[c])
                 classRaffle = 0
-                raffledClass = random.randint(0,turmas[classInstance]-1)
+                raffledClass = random.randint(0,classes[classInstance]-1)
                 raffledClass = raffledClass + 65
                 grade[l][c-1] = chr(raffledClass)
             c = c + 1
@@ -857,7 +857,7 @@ def new_simulation(params, factors, hardPasses, easyPasses, startingYear, subjec
                     #raffling grades
                     freqInstance = round(freqInstance - random.uniform(25,30),2)
                     subjectToSearchforClasses = subjects.index(currentSemester[subjCounter])
-                    currentSemester[subjCounter+1] = chr(int(random.uniform(0,turmas[subjectToSearchforClasses])+65))
+                    currentSemester[subjCounter+1] = chr(int(random.uniform(0,classes[subjectToSearchforClasses])+65))
                     currentSemester[subjCounter+6] = freqInstance
                     currentSemester[subjCounter+2] = round(random.uniform(parametersDistribuitionOverStdQty[paramListCounter],parametersDistribuitionOverStdQty[paramListCounter+1]),2)
 

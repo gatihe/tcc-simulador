@@ -162,7 +162,7 @@ def importacoes():
         if request.method == 'POST':
             if request.files:
                 if "importar" in request.form:
-                    timestamp = datetime.datetime.now().strftime("%d-%m_%I-%M-%S_%p")
+                    timestamp = datetime.now().strftime("%d-%m_%I-%M-%S_%p")
                     try:
                         catalogo = request.files['catalogo']
                         #catalogo.save('app/imports/uploads/catalogo.xml')

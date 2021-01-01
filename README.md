@@ -9,6 +9,7 @@ Esses conjuntos devem ter características programáveis, como por exemplo padr�
 ---
 #### Requisitos:
 - [Python 3.x](https://www.python.org/download/releases/3.0/)
+- [Pip 3.x](https://pip.pypa.io/en/stable/installing/) 
 - [Pandas](https://pandas.pydata.org/)
 - [Lista completa](https://github.com/gatihe/tcc-simulador/blob/master/requirements.txt)
 #### Instruções:
@@ -17,7 +18,7 @@ Esses conjuntos devem ter características programáveis, como por exemplo padr�
 - Execute `pip install -r requirements.txt` no terminal;
 - Execute `gsutil cors set cors.json gs://<your-cloud-storage-bucket>` no terminal
 - Na raiz do diretório extraído, execute o arquivo `wsgi.py`;
-- Importe um catálogo e, se necessário, configurações adicionais;
+- Importe um currículo de curso e configurações adicionais;
 - Faça uma simulaçao;
 - Exporte os relatórios.
 ---
@@ -41,7 +42,7 @@ Entre as configurações que dão suporte à simulação de dados educacionais e
 			<credits><QTDE_DE_CREDITOS></credits>
 			<sem_offer><SEMESTRE_DE_OFERTA></sem_offer>
 			<classes_no><NUMERO DE TURMAS></classes_no>
-			<tipo_nivel_atividade_mae><NIVEL_ATIVIDADE_DA_DISCIPLINA></tipo_nivel_atividade_mae>
+			<tipo_de_curso><NIVEL_ATIVIDADE_DA_DISCIPLINA></tipo_de_curso>
 			<pre_reqs><PRE_REQUISITO></pre_reqs>
 			<ano_inicio><ANO_DE_INICIO_DE_VIGENCIA_DO_PREREQ></ano_inicio>
 			<ano_fim><ANO_DO_FIM_DE_VIGENCIA_DO_PREREQ></ano_fim>
@@ -62,7 +63,7 @@ Entre as configurações que dão suporte à simulação de dados educacionais e
 - `<credits>`: Quantidade de créditos referentes à disciplina (int);
 - `<sem_offer>`: Semestre em que a disciplina é ofertada aos alunos (int);
 - `<classes_no>`: Quantidade de turmas em paralelo na oferta (int);
-- `<tipo_nivel_atividade_mae>`: Natureza da disciplina, pode ser 'G' para se referir à graduação, 'P' para pós-graduação ou qualquer outro valor desejado (chr);
+- `<tipo_de_curso>`: Natureza da disciplina, pode ser 'G' para se referir à graduação, 'P' para pós-graduação ou qualquer outro valor desejado (chr);
 - `<pre_reqs>`: Identificador único da disciplina que seja pré-requisito da disciplina em questão. Mesmo que não haja algum pré-requisito, é necessário ao menos uma instância dessa tag por disciplina (string ou vazio caso não haja). Para disciplinas com mais de um pré-requisito, repetir em ordem correta esta tag e as tags abaixo;
 - `<ano_inicio>`: Ano em que se iniciou a vigência do pré-requisito em questão. Mesmo que não haja algum pré-requisito, é necessário ao menos uma instância dessa tag por disciplina (int ou vazio caso não haja);
 - `<ano_fim>`: Ano em que se encerrou a vigência do pré-requisito em questão ('0' caso vigência do pré-requisito ainda não tenha encerrado). Mesmo que não haja algum pré-requisito, é necessário ao menos uma instância dessa tag por disciplina (int ou vazio caso não haja);
