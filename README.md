@@ -9,7 +9,7 @@ Esses conjuntos devem ter características programáveis, como por exemplo padr�
 ---
 #### Requisitos:
 - [Python 3.x](https://www.python.org/download/releases/3.0/)
-- [Pip 3.x](https://pip.pypa.io/en/stable/installing/) 
+- [Pip 3.x](https://pip.pypa.io/en/stable/installing/)
 - [Pandas](https://pandas.pydata.org/)
 - [Lista completa](https://github.com/gatihe/tcc-simulador/blob/master/requirements.txt)
 #### Instruções:
@@ -23,9 +23,9 @@ Esses conjuntos devem ter características programáveis, como por exemplo padr�
 - Exporte os relatórios.
 ---
 ### Manual do usuário:
-#### Catálogos (.xml):
+#### Currículos de curso (.xml):
 
-Entre as configurações que dão suporte à simulação de dados educacionais estão os catálogos de curso. Este arquivo tem como utilidade especificar as características do curso à ser simulado. Devem ser inseridos em `imports/catalogos/`. Um catálogo deve contar com a seguinte estrutura:
+Entre as configurações que dão suporte à simulação de dados educacionais estão os catálogos de curso. Este arquivo tem como utilidade especificar as características do curso à ser simulado. Devem ser inseridos na página "Importações". Um currículo de curso deve contar com a seguinte estrutura:
 
 
 ```
@@ -73,7 +73,7 @@ Entre as configurações que dão suporte à simulação de dados educacionais e
 
 #### Configurações adicionais (.xml):
 
-É possível adicionar configurações adicionais para adaptar o comportamento do simulador. Devem ser inseridos em `imports/configs/`.Segue estrutura de um arquivo de configurações adicionais:
+É possível adicionar configurações adicionais para adaptar o comportamento do simulador. Devem ser inseridos na p´ågina de "Importações". Segue estrutura de um arquivo de configurações adicionais:
 
 ```
 <all_configs>
