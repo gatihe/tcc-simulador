@@ -1,3 +1,0 @@
-kindly reminder to update export paths when uploading it to pythonanywhere
-/home/guiati9/tcc-simulador/app/
-app/
